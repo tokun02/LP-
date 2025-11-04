@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: radial-gradient(circle at top right, rgba(99, 179, 237, 0.18), transparent 45%),
+    radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.15), transparent 50%), #f8fafc;
+  color: #0f172a;
+  font-family: var(--font-sans), 'Noto Sans JP', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    sans-serif;
+}
+
+::selection {
+  background-color: rgba(59, 130, 246, 0.35);
+}
+
+/* グラデーションアニメーション（Variable Font対応） */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 3s ease infinite;
+  background-size: 200% auto;
+}
+
+/* パフォーマンス最適化 */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 3Dレンダリング最適化 */
+canvas {
+  outline: none;
+  display: block;
+}
+
+/* スクロールパフォーマンス */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

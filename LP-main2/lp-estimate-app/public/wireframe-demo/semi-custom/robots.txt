@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /wp/wp-admin/
+Allow: /wp/wp-admin/admin-ajax.php
+Disallow: /*.pdf$
+Sitemap: https://yolu.jp/sitemap_index.xml
+Disallow: /wp//wp/wp-content/uploads/bulk-media-register-tmp/
