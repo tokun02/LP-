@@ -24,7 +24,7 @@ const NAV_LINKS = [
 const fadeUp = (delay = 0, distance = 26) => ({
   initial: { opacity: 0, y: distance },
   whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: "easeOut" },
+  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
   viewport: { once: true },
 });
 
