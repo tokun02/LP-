@@ -1,0 +1,14 @@
+[build]
+base = "LP-main2/lp-estimate-app"
+command = "npm ci && npm run build"
+publish = ".next"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
+[functions]
+directory = "LP-main2/lp-estimate-app/netlify/functions"
+node_bundler = "esbuild"
+
+[build.environment]
+NODE_VERSION = "20"

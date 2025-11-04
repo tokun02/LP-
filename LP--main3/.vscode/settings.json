@@ -1,0 +1,9 @@
+{
+  "terminal.integrated.profiles.windows": {
+    "WSL": {
+      "path": "C:\\WINDOWS\\System32\\wsl.exe",
+      "icon": "terminal-linux"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell"
+}
