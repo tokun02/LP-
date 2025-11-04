@@ -203,7 +203,7 @@ export const estimateSchema = z.object({
     .array(z.enum(PROJECT_PURPOSE_OPTIONS as unknown as [string, ...string[]]))
     .max(PROJECT_PURPOSE_OPTIONS.length)
     .optional(),
-  siteType: z.enum(SITE_TYPE_OPTIONS as unknown as [string, ...string[]]).optional(),
+  siteType: z.enum(SITE_TYPE_OPTIONS as unknown as [string, ...string[]]).default('LP'),
   pageRange: z.enum(PAGE_RANGE_OPTIONS as unknown as [string, ...string[]]).optional(),
   brandImage: z.enum(BRAND_IMAGE_OPTIONS as unknown as [string, ...string[]]).optional(),
   brandValues: z
