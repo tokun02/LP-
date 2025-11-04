@@ -5,7 +5,7 @@ import { Font, renderToBuffer } from '@react-pdf/renderer';
 import path from 'path';
 import fs from 'fs';
 
-import { HearingPdfDocument } from '@/components/pdf/HearingPdf';
+import { createHearingDocument } from '@/components/pdf/HearingPdf';
 import type { EstimateFormValues } from '@/types/estimate';
 
 // 日本語フォントを登録（サーバー側で実行）
@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // PDFを生成
-    const pdfDoc = React.createElement(HearingPdfDocument, { values: body.values });
+    // PDFを生成（ファクトリ関数を使用）
+    const pdfDoc = createHearingDocument({ values: body.values });
     const pdfBuffer = await renderToBuffer(pdfDoc);
 
     // メール送信の設定
