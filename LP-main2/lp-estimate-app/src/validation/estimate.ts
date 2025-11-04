@@ -67,9 +67,8 @@ export const estimateSchema = z.object({
     .or(z.literal('')),
   contactEmail: z
     .string()
-    .email({ message: 'メールアドレスの形式が正しくありません。' })
-    .optional()
-    .or(z.literal('')),
+    .min(1, { message: 'メールアドレスは必須です。' })
+    .email({ message: 'メールアドレスの形式が正しくありません。' }),
   sitePurpose: z
     .array(sitePurposeEnum, { message: '目的を選択してください。' })
     .max(4, { message: '目的は最大4つまでです。' })
