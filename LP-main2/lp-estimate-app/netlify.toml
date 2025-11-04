@@ -18,3 +18,8 @@
 # 注意: @netlify/plugin-nextjs が自動的にリダイレクトを設定します
 # 上記のリダイレクト設定は不要です（プラグインが処理します）
 
+# GitHubリポジトリの設定（オプション）
+# [git]
+#   url = "https://github.com/tokun02/LP-.git"
+#   branch = "main3"
+
