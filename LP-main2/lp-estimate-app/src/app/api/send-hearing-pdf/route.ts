@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import React from 'react';
 import { Font, renderToBuffer } from '@react-pdf/renderer';
 import path from 'path';
 import fs from 'fs';
