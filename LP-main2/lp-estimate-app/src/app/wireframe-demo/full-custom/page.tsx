@@ -58,7 +58,7 @@ export default function FullCustomPage() {
       {/* ヒーローセクション */}
       <section
         ref={heroRef}
-        className="relative h-screen flex items-center justify-center overflow-hidden"
+        className="relative min-h-[88vh] sm:h-screen flex items-center justify-center overflow-hidden section-y"
       >
         {/* 動的背景グラデーション */}
         <motion.div
@@ -105,7 +105,8 @@ export default function FullCustomPage() {
           >
             {/* 大きな数字 */}
             <motion.div
-              className="text-[12rem] md:text-[20rem] font-bold leading-none mb-8"
+              className="font-bold leading-none mb-6 sm:mb-8"
+              style={{ fontSize: 'clamp(64px, 25vw, 320px)' }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -130,7 +131,8 @@ export default function FullCustomPage() {
 
             {/* メインタイトル */}
             <motion.h1
-              className="text-5xl md:text-8xl font-bold mb-6"
+              className="font-bold mb-6"
+              style={{ fontSize: 'clamp(32px, 10vw, 96px)' }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -142,7 +144,8 @@ export default function FullCustomPage() {
 
             {/* サブタイトル */}
             <motion.p
-              className="text-xl md:text-3xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
+              className="text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed"
+              style={{ fontSize: 'clamp(16px, 4vw, 30px)', lineHeight: '1.65' }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -159,7 +162,7 @@ export default function FullCustomPage() {
               transition={{ duration: 1.2, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
             >
               <motion.button
-                className="group relative px-12 py-5 bg-white text-black rounded-full font-semibold text-lg overflow-hidden"
+                className="group relative px-6 sm:px-12 py-3 sm:py-5 bg-white text-black rounded-full font-semibold text-base sm:text-lg overflow-hidden min-h-[44px] w-full sm:w-auto max-w-sm mx-auto sm:mx-0"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

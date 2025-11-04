@@ -19,13 +19,13 @@ export const EstimateSummaryPanel = ({ breakdown }: EstimateSummaryPanelProps) =
   const items = Array.isArray(breakdown?.items) ? breakdown.items : [];
 
   return (
-    <aside className="sticky top-24 space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-blue-100/30">
+    <aside className="sticky top-24 space-y-3 rounded-lg border border-slate-200 bg-white card-ultra sm:card-compact shadow-lg shadow-blue-100/30">
       <div>
-        <h3 className="text-lg font-semibold text-slate-900">概算見積</h3>
-        <p className="text-xs text-slate-500">入力内容に応じてリアルタイムに更新されます。</p>
+        <h3 className="title-compact text-slate-900">概算見積</h3>
+        <p className="hint-compact mt-0.5">入力内容に応じてリアルタイムに更新されます。</p>
       </div>
-      <div className="space-y-3 text-sm text-slate-600">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+      <div className="stack-compact text-[13px] text-slate-600">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
           <span>小計</span>
           <span className="font-semibold">{subtotal}円</span>
         </div>
@@ -33,23 +33,23 @@ export const EstimateSummaryPanel = ({ breakdown }: EstimateSummaryPanelProps) =
           <span>消費税 ({taxRatePercent}%)</span>
           <span className="font-semibold">{tax}円</span>
         </div>
-        <div className="flex items-center justify-between text-base font-semibold text-blue-600">
+        <div className="flex items-center justify-between text-[15px] font-extrabold text-blue-600">
           <span>表示合計</span>
           <span>{displayTotal}円</span>
         </div>
-        <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
+        <div className="rounded-lg bg-slate-50 card-ultra hint-compact">
           税込・税抜は画面下部の切替スイッチから変更できます。
         </div>
       </div>
-      <div className="space-y-2 text-xs text-slate-400">
+      <div className="stack-compact text-[12px] text-slate-400">
         {items.slice(0, 4).map((item) => (
-          <div key={item.code} className="flex items-center justify-between">
+          <div key={item.code} className="flex items-center justify-between row-tight">
             <span>{item.label}</span>
             <span className="font-medium text-slate-500">+{formatCurrency(item.total)}円</span>
           </div>
         ))}
         {items.length > 4 && (
-          <p className="text-right text-xs text-slate-400">他 {items.length - 4} 項目</p>
+          <p className="text-right text-[12px] text-slate-400">他 {items.length - 4} 項目</p>
         )}
       </div>
     </aside>

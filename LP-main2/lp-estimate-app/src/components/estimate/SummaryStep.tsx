@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
+import clsx from 'clsx';
 
 import { Font, pdf } from '@react-pdf/renderer';
 
@@ -28,9 +29,9 @@ const SummaryRow = ({
   const displayValue = Array.isArray(value) ? value.join('／') : value;
 
   return (
-    <div className="flex items-start justify-between gap-4 rounded-lg border border-slate-200 px-4 py-3 text-sm">
-      <span className="font-medium text-slate-700">{label}</span>
-      <span className="text-right text-slate-600">{displayValue}</span>
+    <div className="flex items-start justify-between gap-2 rounded-lg border-2 border-slate-200 bg-white px-2.5 py-2 text-[13px] sm:gap-4 sm:px-5 sm:py-4 sm:text-base">
+      <span className="font-semibold text-slate-900">{label}</span>
+      <span className="text-right text-slate-700 leading-relaxed break-words">{displayValue}</span>
     </div>
   );
 };
@@ -190,22 +191,22 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
   }, [values]);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6 sm:space-y-10">
       {/* ヒアリング項目 */}
-      <section className="space-y-4">
+      <section className="space-y-2 sm:space-y-4">
         <header>
-          <h3 className="text-lg font-semibold text-slate-900">ヒアリング内容</h3>
-          <p className="text-sm text-slate-500">入力いただいたヒアリング項目を表示しています。</p>
+          <h3 className="title-compact sm:text-lg font-semibold text-slate-900">ヒアリング内容</h3>
+          <p className="lead-compact sm:text-base text-slate-700">入力いただいたヒアリング項目を表示しています。</p>
         </header>
-        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
+        <div className="rounded-lg sm:rounded-xl border border-blue-200 bg-blue-50 card-ultra sm:p-6 shadow-sm">
           {!hasHearingData ? (
-            <div className="text-center py-8">
-              <p className="text-sm text-slate-500">
+            <div className="text-center py-4 sm:py-8">
+              <p className="lead-compact sm:text-base text-slate-700">
                 記入した項目がありません。ヒアリングページで入力いただいた内容がここに表示されます。
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="stack-compact sm:space-y-3">
             {/* 基本情報 */}
             <SummaryRow label="会社名" value={values.companyName} />
             <SummaryRow label="ご担当者名" value={values.contactPersonName} />
@@ -295,25 +296,26 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section className="space-y-3 sm:space-y-4">
         <header>
-          <h3 className="text-lg font-semibold text-slate-900">内訳</h3>
-          <p className="text-sm text-slate-500">選択したパッケージとオプションの明細です。</p>
+          <h3 className="title-compact sm:text-lg font-semibold text-slate-900">内訳</h3>
+          <p className="lead-compact sm:text-base text-slate-700 mb-2 sm:mb-4">選択したパッケージとオプションの明細です。</p>
         </header>
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+        <div className="overflow-hidden rounded-lg sm:rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-x-auto -mx-4 px-4">
+          <table className="min-w-full divide-y divide-slate-200 text-[13px] sm:text-base">
+            <thead className="bg-slate-100 text-[11px] sm:text-sm uppercase tracking-wide text-slate-900 font-semibold">
               <tr>
-                <th scope="col" className="px-4 py-3 text-left">
+                <th scope="col" className="px-2 py-2 sm:px-4 sm:py-3 text-left">
                   項目
                 </th>
-                <th scope="col" className="px-4 py-3 text-right">
+                <th scope="col" className="px-2 py-2 sm:px-4 sm:py-3 text-right">
                   単価
                 </th>
-                <th scope="col" className="px-4 py-3 text-right">
+                <th scope="col" className="px-2 py-2 sm:px-4 sm:py-3 text-right">
                   数量
                 </th>
-                <th scope="col" className="px-4 py-3 text-right">
+                <th scope="col" className="px-2 py-2 sm:px-4 sm:py-3 text-right">
                   小計
                 </th>
               </tr>
@@ -321,75 +323,80 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
             <tbody className="divide-y divide-slate-100">
               {breakdown.items.map((item) => (
                 <tr key={item.code} className="text-slate-700">
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{item.label}</div>
-                    <div className="text-xs text-slate-400">{item.category}</div>
+                  <td className="px-2 py-2 sm:px-4 sm:py-3">
+                    <div className="font-medium text-xs sm:text-sm">{item.label}</div>
+                    <div className="text-[10px] sm:text-sm text-slate-600 font-medium">{item.category}</div>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right">
+                  <td className="whitespace-nowrap px-2 py-2 text-right text-xs sm:text-sm sm:px-4 sm:py-3">
                     {item.unitAmount.toLocaleString()}円
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right">{item.quantity}</td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right font-semibold">
+                  <td className="whitespace-nowrap px-2 py-2 text-right text-xs sm:text-sm sm:px-4 sm:py-3">{item.quantity}</td>
+                  <td className="whitespace-nowrap px-2 py-2 text-right font-semibold text-xs sm:text-sm sm:px-4 sm:py-3">
                     {item.total.toLocaleString()}円
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </section>
 
-      <section className="space-y-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-3 text-sm text-slate-600">
-            <div className="flex items-center justify-between border-b border-dashed border-slate-200 pb-3">
+      <section className="space-y-2 sm:space-y-3">
+        <div className="rounded-lg sm:rounded-xl border border-slate-200 bg-white card-ultra sm:p-6 shadow-sm">
+          <div className="stack-compact sm:gap-4 text-[13px] sm:text-base text-slate-700">
+            <div className="flex items-center justify-between border-b border-dashed border-slate-200 pb-1.5 sm:pb-3">
               <span>小計</span>
               <span className="font-semibold">{breakdown.subtotal.toLocaleString()}円</span>
             </div>
-            <div className="flex items-center justify-between border-b border-dashed border-slate-200 pb-3">
+            <div className="flex items-center justify-between border-b border-dashed border-slate-200 pb-1.5 sm:pb-3">
               <span>消費税 ({Math.round(breakdown.taxRate * 100)}%)</span>
               <span className="font-semibold">{breakdown.tax.toLocaleString()}円</span>
             </div>
-            <div className="flex items-center justify-between text-base font-semibold text-slate-800">
+            <div className="flex items-center justify-between text-[15px] sm:text-base font-extrabold text-slate-800">
               <span>税込合計</span>
               <span>{breakdown.totalWithTax.toLocaleString()}円</span>
             </div>
-            <div className="flex items-center justify-between text-sm text-slate-500">
+            <div className="flex items-center justify-between text-[15px] sm:text-base font-extrabold text-slate-900">
               <span>税抜合計</span>
               <span>{breakdown.totalWithoutTax.toLocaleString()}円</span>
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-ultra sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             <button
               type="button"
               onClick={handlePdfDownload}
               disabled={isSendingEmail}
-              className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              {...(isSendingEmail && { 'aria-busy': true })}
+              className={clsx(
+                'btn btn-primary btn-sm w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed',
+                !isSendingEmail && 'btn-primary-indigo'
+              )}
             >
               {isSendingEmail ? 'PDF生成中…' : 'PDFをダウンロード'}
             </button>
             {isSendingEmail && (
-              <span className="text-xs text-slate-500">メール送信中...</span>
+              <span className="text-[13px] sm:text-sm text-slate-700 text-center sm:text-left font-medium">メール送信中...</span>
             )}
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="hint-compact sm:text-sm text-slate-700 break-words max-w-sm sm:max-w-none">
             PDFはドラフト版です。PDFダウンロード時にメールでお送りします。
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <div className="flex flex-col gap-ultra sm:flex-row sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+            className="btn btn-outline btn-sm w-full sm:w-auto"
           >
             修正する
           </button>
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center justify-center rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+            className="btn btn-outline btn-sm btn-reset-red w-full sm:w-auto"
           >
             入力をリセット
           </button>
