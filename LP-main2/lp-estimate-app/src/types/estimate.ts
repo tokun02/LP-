@@ -1,10 +1,4 @@
-import type {
-  BasePackageCode,
-  DesignIntensity,
-  OptionCode,
-  TariffOption,
-} from '@/data/tariffs';
-import type { WireframeType } from '@/data/form-options';
+import type { TariffOption } from '@/data/tariffs';
 
 export type SitePurpose =
   | '集客'
