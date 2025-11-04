@@ -1,0 +1,25 @@
+# Netlify設定ファイル（リポジトリルート）
+# このプロジェクトはサブディレクトリにあります
+
+[build]
+  # アプリがあるサブディレクトリを相対パスで指定
+  base = "LP-main3/LP-main2/lp-estimate-app"
+  # npm ci を使用して依存関係をクリーンインストール
+  command = "npm ci && npm run build"
+  # Next.js on Netlify はプラグインが publish をよしなに扱うので指定なしでも可
+  # 明示的に指定する場合は .next を使用
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  # Functions directoryはリポジトリルートからの相対パス
+  directory = "LP-main3/LP-main2/lp-estimate-app/netlify/functions"
+  node_bundler = "esbuild"
+
+# 環境変数の設定（本番環境用）
+# 注意: 実際の環境変数はNetlifyダッシュボードで設定してください
+[build.environment]
+  NODE_VERSION = "18"
+
