@@ -353,7 +353,10 @@ export const EstimateWizard = () => {
         </div>
       </div>
 
-      <div className="mt-6 sm:mt-10 grid gap-6 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className={clsx(
+        "mt-6 sm:mt-10 grid gap-6 sm:gap-10",
+        currentStep === 'basic' ? "lg:grid-cols-1" : "lg:grid-cols-[minmax(0,1fr)_320px]"
+      )}>
         <FormProvider {...formMethods}>
           {isSummary ? (
             <div className="space-y-8">
@@ -371,9 +374,11 @@ export const EstimateWizard = () => {
               }}
             >
               <ActiveComponent />
-              <div className="lg:hidden">
-                <EstimateSummaryPanel breakdown={breakdown} />
-              </div>
+              {currentStep !== 'basic' && (
+                <div className="lg:hidden">
+                  <EstimateSummaryPanel breakdown={breakdown} />
+                </div>
+              )}
               <div className="flex flex-col gap-ultra pt-3 sm:flex-row sm:justify-between sm:gap-3">
                 <button
                   type="button"
@@ -409,9 +414,11 @@ export const EstimateWizard = () => {
             </form>
           )}
         </FormProvider>
-        <div className="hidden lg:block">
-          <EstimateSummaryPanel breakdown={breakdown} />
-        </div>
+        {currentStep !== 'basic' && (
+          <div className="hidden lg:block">
+            <EstimateSummaryPanel breakdown={breakdown} />
+          </div>
+        )}
       </div>
     </div>
   );

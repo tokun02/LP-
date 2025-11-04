@@ -160,9 +160,9 @@ export const BasicInfoStep = () => {
   // 「該当なし」チェックボックスの状態を管理
   const [notApplicableFields, setNotApplicableFields] = useState<Set<string>>(new Set());
 
-  // アコーディオンの展開状態を管理（必須セクションはデフォルトで展開）
+  // アコーディオンの展開状態を管理（デフォルトですべて折りたたみ）
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['basic-info', 'project-overview']), // 必須セクションは初期展開
+    new Set(), // デフォルトですべて折りたたみ
   );
 
   const toggleSection = (sectionId: string) => {
@@ -177,28 +177,6 @@ export const BasicInfoStep = () => {
     });
   };
 
-  const expandAll = () => {
-    setExpandedSections(
-      new Set([
-        'basic-info',
-        'project-overview',
-        'brand',
-        'competitor',
-        'budget',
-        'current-site',
-        'design',
-        'features',
-        'seo',
-        'tech',
-        'maintenance',
-        'project-management',
-      ]),
-    );
-  };
-
-  const collapseAll = () => {
-    setExpandedSections(new Set(['basic-info', 'project-overview'])); // 必須セクションのみ展開
-  };
 
   // セクションの完了率を計算する関数
   const calculateCompletion = (sectionId: string): number => {
@@ -264,133 +242,8 @@ export const BasicInfoStep = () => {
     }
   };
 
-  // ヒアリングセクションのリセット関数
-  const handleResetHearing = () => {
-    if (confirm('ヒアリング内容をすべてリセットしますか？この操作は取り消せません。')) {
-      // ヒアリング関連のフィールドをリセット
-      const hearingFields: Partial<EstimateFormValues> = {
-        companyName: '',
-        contactPersonName: '',
-        contactPosition: '',
-        contactEmail: '',
-        contactPhone: '',
-        location: '',
-        industry: undefined,
-        industryOther: '',
-        employeeSize: undefined,
-        projectPurpose: [],
-        projectPurposeOther: '',
-        pageStructureRequest: '',
-        targetGender: undefined,
-        targetAgeGroups: [],
-        targetCharacteristics: '',
-        brandImage: '',
-        brandValues: [],
-        brandGoals: [],
-        competitorUrl: '',
-        competitorGoodPoints: [],
-        competitorImprovePoints: [],
-        companyStrengths: [],
-        differentiationIdeas: [],
-        budgetDetail: '',
-        budgetNote: '',
-        deadline: undefined,
-        deadlineSpecific: '',
-        existingSite: undefined,
-        existingSiteUrl: '',
-        currentSiteIssues: [],
-        monthlyVisitCount: '',
-        mainColor: '',
-        logoProvided: undefined,
-        photoMaterials: [],
-        photoShortageHandling: '',
-        basicFeatures: [],
-        advancedFeatures: [],
-        cmsChoice: undefined,
-        updateStyle: undefined,
-        seoImportance: undefined,
-        targetKeywords: '',
-        currentMarketing: [],
-        snsIntegration: [],
-        ga4Status: undefined,
-        domainChoice: undefined,
-        domainExisting: '',
-        serverChoice: undefined,
-        sslChoice: undefined,
-        devicesSupported: [],
-        maintenanceContract: undefined,
-        backupChoice: undefined,
-        securityImportance: undefined,
-        approvalFlow: undefined,
-        approvalFlowDetails: '',
-        pastWebExperience: undefined,
-        pastWebExperienceDetails: '',
-        priorities: [],
-        otherRequests: '',
-        feedback: '',
-        notes: '',
-      };
-      
-      // 現在の値を取得して、ヒアリングフィールドのみリセット
-      const currentValues = watch();
-      const resetValues = {
-        ...currentValues,
-        ...hearingFields,
-      };
-      
-      reset(resetValues);
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      {/* グローバルコントロール */}
-      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50 card-ultra gap-ultra flex-wrap">
-        <div>
-          <p className="label-compact font-semibold text-slate-700">セクションをまとめて操作</p>
-          <p className="mt-0.5 hint-compact">全てのセクションを展開/折りたたみできます</p>
-        </div>
-        <div className="flex gap-ultra">
-          <button
-            type="button"
-            onClick={expandAll}
-            className="btn btn-outline btn-sm"
-          >
-            全て展開
-          </button>
-          <button
-            type="button"
-            onClick={collapseAll}
-            className="btn btn-outline btn-sm"
-          >
-            全て折りたたみ
-          </button>
-        </div>
-      </div>
-
-      {/* リセットボタン */}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleResetHearing}
-          className="btn btn-outline btn-sm btn-reset-red"
-        >
-          <svg
-            className="h-3.5 w-3.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-          ヒアリングをリセット
-        </button>
-      </div>
+    <div className="space-y-6 w-full">
       {/* 1. 基本情報（詳細） */}
       <AccordionSection
         id="basic-info"
