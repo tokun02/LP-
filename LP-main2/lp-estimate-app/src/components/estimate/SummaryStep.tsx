@@ -4,9 +4,6 @@ import { useMemo, useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import clsx from 'clsx';
 
-import { Font, pdf } from '@react-pdf/renderer';
-
-import { EstimatePdfDocument } from '@/components/pdf/EstimatePdf';
 import type { EstimateBreakdown, EstimateFormValues } from '@/types/estimate';
 
 type SummaryStepProps = {
@@ -41,30 +38,38 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
   const values = getValues();
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
-  // クライアント側でフォントを登録
+  // クライアント側でフォントを登録（ブラウザ環境でのみ実行）
   useEffect(() => {
-    try {
-      Font.register({
-        family: 'NotoSansJP',
-        fonts: [
-          {
-            src: '/fonts/static/NotoSansJP-Regular.ttf',
-            fontWeight: 400,
-          },
-          {
-            src: '/fonts/static/NotoSansJP-Medium.ttf',
-            fontWeight: 500,
-          },
-          {
-            src: '/fonts/static/NotoSansJP-Bold.ttf',
-            fontWeight: 700,
-          },
-        ],
-      });
-    } catch (error) {
-      // フォント登録エラーは無視（既に登録されている可能性がある）
-      console.warn('Font registration warning:', error);
-    }
+    // SSR中は実行しない
+    if (typeof window === 'undefined') return;
+    
+    // 動的インポートで@react-pdf/rendererをロード
+    import('@react-pdf/renderer').then(({ Font }) => {
+      try {
+        Font.register({
+          family: 'NotoSansJP',
+          fonts: [
+            {
+              src: '/fonts/static/NotoSansJP-Regular.ttf',
+              fontWeight: 400,
+            },
+            {
+              src: '/fonts/static/NotoSansJP-Medium.ttf',
+              fontWeight: 500,
+            },
+            {
+              src: '/fonts/static/NotoSansJP-Bold.ttf',
+              fontWeight: 700,
+            },
+          ],
+        });
+      } catch (error) {
+        // フォント登録エラーは無視（既に登録されている可能性がある）
+        console.warn('Font registration warning:', error);
+      }
+    }).catch((error) => {
+      console.warn('Failed to load @react-pdf/renderer:', error);
+    });
   }, []);
 
   const pdfFileName = useMemo(
@@ -74,8 +79,15 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
 
   // PDFダウンロード時にメールを送信
   const handlePdfDownload = async () => {
+    // ブラウザ環境でのみ実行
+    if (typeof window === 'undefined') return;
+    
     try {
       setIsSendingEmail(true);
+      
+      // 動的インポートで@react-pdf/rendererをロード
+      const { pdf } = await import('@react-pdf/renderer');
+      const { EstimatePdfDocument } = await import('@/components/pdf/EstimatePdf');
       
       // PDFを生成してダウンロード
       const doc = <EstimatePdfDocument values={values} breakdown={breakdown} />;
