@@ -174,7 +174,7 @@ export const estimateSchema = z.object({
     .optional()
     .or(z.literal('')),
   kpiMonthlyTarget: z
-    .number({ invalid_type_error: '月間目標値は数値で入力してください。' })
+    .number({ message: '月間目標値は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
 
