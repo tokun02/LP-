@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 import React from 'react';
 import { renderToBuffer } from '@react-pdf/renderer';
 
-import { HearingPdfDocument } from '../../src/components/pdf/HearingPdf';
+import { createHearingDocument } from '../../src/components/pdf/HearingPdf';
 import type { EstimateFormValues } from '../../src/types/estimate';
 
 // 開発者のメールアドレス（環境変数から取得、デフォルト値設定）
@@ -52,8 +52,8 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    // PDFを生成
-    const pdfDoc = React.createElement(HearingPdfDocument, { values: body.values });
+    // PDFを生成（ファクトリ関数を使用）
+    const pdfDoc = createHearingDocument({ values: body.values });
     const pdfBuffer = await renderToBuffer(pdfDoc);
 
     // メール送信の設定

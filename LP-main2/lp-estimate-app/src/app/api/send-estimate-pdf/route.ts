@@ -5,8 +5,8 @@ import { Font, renderToBuffer } from '@react-pdf/renderer';
 import path from 'path';
 import fs from 'fs';
 
-import { EstimatePdfDocument } from '@/components/pdf/EstimatePdf';
-import { HearingPdfDocument } from '@/components/pdf/HearingPdf';
+import { createEstimateDocument } from '@/components/pdf/EstimatePdf';
+import { createHearingDocument } from '@/components/pdf/HearingPdf';
 import type { EstimateBreakdown, EstimateFormValues } from '@/types/estimate';
 
 // 日本語フォントを登録（サーバー側で実行）
@@ -111,10 +111,10 @@ export async function POST(request: NextRequest) {
 
     console.log('📧 PDF生成開始...');
     
-    // 見積PDFを生成
+    // 見積PDFを生成（ファクトリ関数を使用）
     let estimatePdfBuffer: Buffer;
     try {
-      const estimatePdfDoc = React.createElement(EstimatePdfDocument, {
+      const estimatePdfDoc = createEstimateDocument({
         values: body.values,
         breakdown: body.breakdown,
       });
@@ -125,10 +125,10 @@ export async function POST(request: NextRequest) {
       throw new Error(`見積PDFの生成に失敗しました: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
-    // ヒアリングPDFを生成
+    // ヒアリングPDFを生成（ファクトリ関数を使用）
     let hearingPdfBuffer: Buffer;
     try {
-      const hearingPdfDoc = React.createElement(HearingPdfDocument, {
+      const hearingPdfDoc = createHearingDocument({
         values: body.values,
       });
       hearingPdfBuffer = await renderToBuffer(hearingPdfDoc);

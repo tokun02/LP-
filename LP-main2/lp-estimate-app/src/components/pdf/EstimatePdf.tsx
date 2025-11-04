@@ -1,4 +1,5 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import React from 'react';
+import { Document, Page, StyleSheet, Text, View, type DocumentProps } from '@react-pdf/renderer';
 
 import { basePackages, options as tariffOptions } from '@/data/tariffs';
 import { SITE_PURPOSE_TO_PACKAGE } from '@/data/form-options';
@@ -605,3 +606,13 @@ export const EstimatePdfDocument = ({ values, breakdown, generatedAt = new Date(
     </Document>
   );
 };
+
+// ファクトリ関数：ReactElement<DocumentProps>を返す
+export function createEstimateDocument({
+  values,
+  breakdown,
+  generatedAt = new Date(),
+}: EstimatePdfDocumentProps): React.ReactElement<DocumentProps> {
+  // EstimatePdfDocumentは既にDocumentを含んでいるので、そのまま使用して型アサーション
+  return React.createElement(EstimatePdfDocument, { values, breakdown, generatedAt }) as React.ReactElement<DocumentProps>;
+}
