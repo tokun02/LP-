@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { FormProvider, type FieldPath, useForm } from 'react-hook-form';
+import { FormProvider, type FieldPath, type Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { BasicInfoStep } from '@/components/estimate/BasicInfoStep';
@@ -115,7 +115,7 @@ export const EstimateWizard = () => {
   const [isInitialised, setIsInitialised] = useState(false);
 
   const formMethods = useForm<EstimateFormValues>({
-    resolver: zodResolver(estimateSchema),
+    resolver: zodResolver(estimateSchema) as Resolver<EstimateFormValues>,
     defaultValues: values,
     mode: 'onChange',
   });
