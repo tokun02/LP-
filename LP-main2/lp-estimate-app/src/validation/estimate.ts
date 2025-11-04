@@ -45,8 +45,8 @@ import {
 
 const SITE_PURPOSE_VALUES_LOCAL = basePackages.map((pkg) => pkg.name as SitePurpose);
 const sitePurposeEnum = z.enum(SITE_PURPOSE_VALUES_LOCAL as [SitePurpose, ...SitePurpose[]]);
-const budgetEnum = z.enum(BUDGET_RANGE_OPTIONS as [BudgetRange, ...BudgetRange[]]);
-const serverDomainEnum = z.enum(SERVER_DOMAIN_OPTIONS as [ServerDomainStatus, ...ServerDomainStatus[]]);
+const budgetEnum = z.enum([...BUDGET_RANGE_OPTIONS] as unknown as [BudgetRange, ...BudgetRange[]]);
+const serverDomainEnum = z.enum([...SERVER_DOMAIN_OPTIONS] as unknown as [ServerDomainStatus, ...ServerDomainStatus[]]);
 
 const basePackageEnum = z.enum(basePackages.map((pkg) => pkg.code) as [BasePackageCode, ...BasePackageCode[]]);
 const designIntensityEnum = z.enum(
