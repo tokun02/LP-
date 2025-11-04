@@ -554,7 +554,7 @@ export const EstimatePdfDocument = ({ values, breakdown, generatedAt = new Date(
         )}
 
         {/* プロジェクト進行 */}
-        {(values.approvalFlow || values.approvalFlowDetails || values.projectPriority || values.pastExperience) && (
+        {(values.approvalFlow || values.approvalFlowDetails || values.pastWebExperience || values.pastWebExperienceDetails || values.priorities || values.otherRequests || values.feedback) && (
           <View style={styles.section}>
             <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8 }}>プロジェクト進行</Text>
             {values.approvalFlow && (
@@ -569,16 +569,34 @@ export const EstimatePdfDocument = ({ values, breakdown, generatedAt = new Date(
                 <Text>{values.approvalFlowDetails}</Text>
               </View>
             )}
-            {values.projectPriority && (
-              <View style={styles.row}>
-                <Text>プロジェクトの優先度</Text>
-                <Text>{values.projectPriority}</Text>
-              </View>
-            )}
-            {values.pastExperience && (
+            {values.pastWebExperience && (
               <View style={styles.row}>
                 <Text>過去のウェブサイト制作経験</Text>
-                <Text>{values.pastExperience}</Text>
+                <Text>{values.pastWebExperience}</Text>
+              </View>
+            )}
+            {values.pastWebExperienceDetails && (
+              <View style={styles.row}>
+                <Text>過去の経験の詳細</Text>
+                <Text>{values.pastWebExperienceDetails}</Text>
+              </View>
+            )}
+            {values.priorities && values.priorities.length > 0 && (
+              <View style={styles.row}>
+                <Text>弊社に期待すること</Text>
+                <Text>{values.priorities.join(', ')}</Text>
+              </View>
+            )}
+            {values.otherRequests && (
+              <View style={styles.row}>
+                <Text>その他の要望・補足事項</Text>
+                <Text>{values.otherRequests}</Text>
+              </View>
+            )}
+            {values.feedback && (
+              <View style={styles.row}>
+                <Text>ヒアリングシートについてのご感想</Text>
+                <Text>{values.feedback}</Text>
               </View>
             )}
           </View>
