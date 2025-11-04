@@ -149,7 +149,6 @@ export const calculateEstimate = (values: EstimateFormValues): EstimateBreakdown
       } else if (pageCount <= 4) {
         // 2〜4ページ: 1ページと5ページの間を線形補間
         pricePerLanguage = Math.round(60000 + (pageCount - 1) * 2500);
-        const min = Math.max(pageCount * 40000 / pageCount, 40000);
         const max = Math.round(pageCount * 25000);
         priceRange = `¥40,000〜¥${max.toLocaleString()}`;
       } else if (pageCount <= 9) {
