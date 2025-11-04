@@ -180,8 +180,11 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
       values.securityImportance ||
       values.approvalFlow ||
       values.approvalFlowDetails ||
-      values.projectPriority ||
-      values.pastExperience ||
+      values.pastWebExperience ||
+      values.pastWebExperienceDetails ||
+      values.priorities ||
+      values.otherRequests ||
+      values.feedback ||
       values.notes
     );
   }, [values]);
@@ -279,8 +282,13 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
             {/* プロジェクト進行 */}
             <SummaryRow label="決裁者・承認フロー" value={values.approvalFlow} />
             <SummaryRow label="承認プロセスについての詳細" value={values.approvalFlowDetails} />
-            <SummaryRow label="プロジェクトの優先度" value={values.projectPriority} />
-            <SummaryRow label="過去のウェブサイト制作経験" value={values.pastExperience} />
+            <SummaryRow label="過去のウェブサイト制作経験" value={values.pastWebExperience} />
+            <SummaryRow label="過去の経験の詳細" value={values.pastWebExperienceDetails} />
+            {(values.priorities && values.priorities.length > 0) && (
+              <SummaryRow label="弊社に期待すること" value={values.priorities.join(', ')} />
+            )}
+            <SummaryRow label="その他の要望・補足事項" value={values.otherRequests} />
+            <SummaryRow label="ヒアリングシートについてのご感想" value={values.feedback} />
             <SummaryRow label="その他の要望・補足事項" value={values.notes} />
             </div>
           )}
