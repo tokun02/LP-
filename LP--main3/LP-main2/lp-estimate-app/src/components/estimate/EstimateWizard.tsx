@@ -155,9 +155,9 @@ export const EstimateWizard = () => {
     const requiredSections = [
       // 1. 基本情報（詳細）
       {
-        fields: ['companyName', 'contactPersonName', 'contactPhone'],
+        fields: ['companyName', 'contactPersonName', 'contactPhone', 'contactEmail'],
         check: (v: EstimateFormValues) => {
-          return v.companyName && v.contactPersonName && v.contactPhone;
+          return v.companyName && v.contactPersonName && v.contactPhone && v.contactEmail;
         },
       },
       // 2. プロジェクト概要（詳細）

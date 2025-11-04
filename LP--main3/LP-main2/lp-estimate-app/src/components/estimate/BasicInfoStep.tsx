@@ -102,11 +102,6 @@ const AccordionSection = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1 flex-wrap">
               <h3 className="title-compact sm:text-xl text-slate-900 leading-tight">{title}</h3>
-              {isRequired && (
-                <span className="shrink-0 rounded-full bg-orange-100 px-1 py-0.5 text-[8px] sm:text-xs font-semibold text-orange-700">
-                  必須
-                </span>
-              )}
             </div>
             <p className="mt-0.5 lead-compact sm:text-base text-slate-700">{description}</p>
             {isPartiallyCompleted && (
@@ -183,7 +178,7 @@ export const BasicInfoStep = () => {
     const values = watch();
     switch (sectionId) {
       case 'basic-info':
-        const basicFields = ['companyName', 'contactPersonName', 'contactPhone'];
+        const basicFields = ['companyName', 'contactPersonName', 'contactPhone', 'contactEmail'];
         const basicFilled = basicFields.filter((f) => values[f as keyof EstimateFormValues]).length;
         return (basicFilled / basicFields.length) * 100;
       case 'project-overview':
@@ -256,9 +251,10 @@ export const BasicInfoStep = () => {
         completionRate={calculateCompletion('basic-info')}
       >
         <div className="grid gap-ultra sm:gap-6 grid-cols-1 md:grid-cols-2">
+          {/* 必須項目を上部に配置 */}
           <div>
             <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
-              会社名
+              会社名<span className="text-red-500 ml-0.5">*</span>
             </label>
             <input
               type="text"
@@ -270,7 +266,7 @@ export const BasicInfoStep = () => {
           </div>
           <div>
             <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
-              ご担当者名
+              ご担当者名<span className="text-red-500 ml-0.5">*</span>
             </label>
             <input
               type="text"
@@ -280,6 +276,31 @@ export const BasicInfoStep = () => {
             />
             <FormError message={errors.contactPersonName?.message} />
           </div>
+          <div>
+            <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
+              担当者メール<span className="text-red-500 ml-0.5">*</span>
+            </label>
+            <input
+              type="email"
+              className="w-full rounded-lg border-2 border-slate-300 field-compact input-zoom-safe shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[44px] bg-white sm:px-4 sm:py-3.5 sm:text-base sm:min-h-[52px] sm:rounded-xl"
+              placeholder="例: name@example.com"
+              {...register('contactEmail')}
+            />
+            <FormError message={errors.contactEmail?.message} />
+          </div>
+          <div>
+            <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
+              電話番号<span className="text-red-500 ml-0.5">*</span>
+            </label>
+            <input
+              type="tel"
+              className="w-full rounded-lg border-2 border-slate-300 field-compact input-zoom-safe shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[44px] bg-white sm:px-4 sm:py-3.5 sm:text-base sm:min-h-[52px] sm:rounded-xl"
+              placeholder="例: 03-1234-5678"
+              {...register('contactPhone')}
+            />
+            <FormError message={errors.contactPhone?.message} />
+          </div>
+          {/* 任意項目を下部に配置 */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block label-compact font-medium text-slate-700">役職・部署</label>
@@ -313,16 +334,6 @@ export const BasicInfoStep = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">担当者メール</label>
-            <input
-              type="email"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              placeholder="name@example.com"
-              {...register('contactEmail')}
-            />
-            <FormError message={errors.contactEmail?.message} />
-          </div>
-          <div>
             <label className="block text-sm font-medium text-slate-700">公開希望日</label>
             <input
               type="date"
@@ -331,18 +342,6 @@ export const BasicInfoStep = () => {
             />
             <FormError message={errors.launchDate?.message} />
           </div>
-          <div>
-            <label className="block label-compact font-medium text-slate-700">
-              電話番号
-            </label>
-            <input
-              type="tel"
-              className="mt-1.5 w-full rounded-lg border border-slate-300 field-compact shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-3 sm:py-2 sm:text-base"
-              placeholder="例: 03-1234-5678"
-              {...register('contactPhone')}
-            />
-            <FormError message={errors.contactPhone?.message} />
-        </div>
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium text-slate-700">所在地</label>
@@ -428,7 +427,7 @@ export const BasicInfoStep = () => {
         <div className="space-y-6">
           <div>
           <label className="block label-compact font-medium text-slate-700">
-            ウェブサイト制作の目的（複数選択可）
+            ウェブサイト制作の目的（複数選択可）<span className="text-red-500 ml-0.5">*</span>
           </label>
           <div className="mt-2 grid gap-ultra sm:gap-2 sm:grid-cols-2">
             {PROJECT_PURPOSE_OPTIONS.map((purpose) => {
@@ -591,7 +590,7 @@ export const BasicInfoStep = () => {
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-slate-700">
-            御社のブランドを一言で表すとしたら？（1つだけ選択）
+            御社のブランドを一言で表すとしたら？（1つだけ選択）<span className="text-red-500 ml-0.5">*</span>
             </label>
           <select
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -607,7 +606,7 @@ export const BasicInfoStep = () => {
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">
-            御社のブランドが大切にしている価値観は何ですか？（複数選択可）
+            御社のブランドが大切にしている価値観は何ですか？（複数選択可）<span className="text-red-500 ml-0.5">*</span>
           </label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {BRAND_VALUES_OPTIONS.map((value, idx) => {
@@ -637,7 +636,7 @@ export const BasicInfoStep = () => {
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">
-            御社のブランドが目指しているのは？（複数選択可）
+            御社のブランドが目指しているのは？（複数選択可）<span className="text-red-500 ml-0.5">*</span>
           </label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {BRAND_GOALS_OPTIONS.map((goal, idx) => {
@@ -681,7 +680,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの良いところ（複数選択可）</label>
+          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの良いところ（複数選択可）<span className="text-red-500 ml-0.5">*</span></label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {COMPETITOR_GOOD_OPTIONS.map((point) => {
               const selectedPoints = watch('competitorGoodPoints') ?? [];
@@ -743,7 +742,7 @@ export const BasicInfoStep = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの改善点（複数選択可）</label>
+          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの改善点（複数選択可）<span className="text-red-500 ml-0.5">*</span></label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {COMPETITOR_IMPROVE_OPTIONS.map((point) => {
               const selectedPoints = watch('competitorImprovePoints') ?? [];
@@ -806,7 +805,7 @@ export const BasicInfoStep = () => {
         </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-            競合他社のサービスと比べて、御社のサービスの違いや強みは何ですか？（複数選択可）
+            競合他社のサービスと比べて、御社のサービスの違いや強みは何ですか？（複数選択可）<span className="text-red-500 ml-0.5">*</span>
             </label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {STRENGTH_OPTIONS.map((strength) => {
@@ -885,7 +884,7 @@ export const BasicInfoStep = () => {
         <div className="space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700">ご予算</label>
+            <label className="block text-sm font-medium text-slate-700">ご予算<span className="text-red-500 ml-0.5">*</span></label>
             <select
               className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               {...register('budgetDetail')}
@@ -899,7 +898,7 @@ export const BasicInfoStep = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">希望納期</label>
+            <label className="block text-sm font-medium text-slate-700">希望納期<span className="text-red-500 ml-0.5">*</span></label>
             <select
               className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               {...register('deadline')}
@@ -994,7 +993,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">既存ウェブサイトの有無</label>
+          <label className="block text-sm font-medium text-slate-700">既存ウェブサイトの有無<span className="text-red-500 ml-0.5">*</span></label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {EXISTING_SITE_OPTIONS.map((option) => {
               const selected = watch('existingSite') === option;
@@ -1192,7 +1191,7 @@ export const BasicInfoStep = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">希望するメインカラー</label>
+          <label className="block text-sm font-medium text-slate-700">希望するメインカラー<span className="text-red-500 ml-0.5">*</span></label>
           <select
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             {...register('mainColor')}
@@ -1238,7 +1237,7 @@ export const BasicInfoStep = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">ロゴデータの提供</label>
+          <label className="block text-sm font-medium text-slate-700">ロゴデータの提供<span className="text-red-500 ml-0.5">*</span></label>
           <select
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             {...register('logoProvided')}
@@ -1348,7 +1347,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">必要な基本機能（複数選択可）</label>
+          <label className="block text-sm font-medium text-slate-700">必要な基本機能（複数選択可）<span className="text-red-500 ml-0.5">*</span></label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {BASIC_FEATURES_OPTIONS.map((feature) => {
               const selectedFeatures = watch('basicFeatures') ?? [];
@@ -1408,7 +1407,7 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">CMS（コンテンツ管理システム）の希望</label>
+          <label className="block text-sm font-medium text-slate-700">CMS（コンテンツ管理システム）の希望<span className="text-red-500 ml-0.5">*</span></label>
           <p className="mt-1 text-xs text-slate-500">
             CMSとは？ウェブサイトの文章や画像を、専門知識がなくても簡単に更新・編集できるシステムのことです。
             <br />
@@ -1463,7 +1462,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">SEO対策の重要度</label>
+          <label className="block text-sm font-medium text-slate-700">SEO対策の重要度<span className="text-red-500 ml-0.5">*</span></label>
           <select
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             {...register('seoImportance')}
@@ -1573,7 +1572,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">ドメインについて</label>
+          <label className="block text-sm font-medium text-slate-700">ドメインについて<span className="text-red-500 ml-0.5">*</span></label>
           <p className="mt-1 text-xs text-slate-500">
             ドメインとは？ウェブサイトのアドレス（URL）のことで、「example.com」のような形式です。
           </p>
@@ -1598,7 +1597,7 @@ export const BasicInfoStep = () => {
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">サーバーについて</label>
+          <label className="block text-sm font-medium text-slate-700">サーバーについて<span className="text-red-500 ml-0.5">*</span></label>
           <p className="mt-1 text-xs text-slate-500">
             サーバーとは？ウェブサイトのデータを保存して、インターネット上に公開するためのコンピューターのことです。
           </p>
@@ -1677,7 +1676,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">契約形態のご希望</label>
+          <label className="block text-sm font-medium text-slate-700">契約形態のご希望<span className="text-red-500 ml-0.5">*</span></label>
           <select
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             {...register('maintenanceContract')}
@@ -1737,7 +1736,7 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">決裁者・承認フロー</label>
+          <label className="block text-sm font-medium text-slate-700">決裁者・承認フロー<span className="text-red-500 ml-0.5">*</span></label>
           <select
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             {...register('approvalFlow')}
