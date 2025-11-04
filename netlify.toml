@@ -1,4 +1,4 @@
-[build]
+﻿[build]
 base = "LP-main3/LP-main2/lp-estimate-app"
 command = "npm ci && npm run build"
 publish = ".next"
