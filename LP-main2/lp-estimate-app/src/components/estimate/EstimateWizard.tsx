@@ -144,6 +144,112 @@ export const EstimateWizard = () => {
   const isSummary = activeStep.id === 'summary';
   const ActiveComponent = activeStep.component ?? (() => null);
 
+  // フォームの値を監視
+  const watchedValues = formMethods.watch();
+
+  // 必須項目のバリデーション（BasicInfoStepの場合）
+  const isBasicInfoValid = useMemo(() => {
+    if (currentStep !== 'basic') return true; // basic以外は常に有効
+    
+    // 必須セクションのチェック
+    const requiredSections = [
+      // 1. 基本情報（詳細）
+      {
+        fields: ['companyName', 'contactPersonName', 'contactPhone'],
+        check: (v: EstimateFormValues) => {
+          return v.companyName && v.contactPersonName && v.contactPhone;
+        },
+      },
+      // 2. プロジェクト概要（詳細）
+      {
+        fields: ['projectPurpose'],
+        check: (v: EstimateFormValues) => {
+          return v.projectPurpose && Array.isArray(v.projectPurpose) && v.projectPurpose.length > 0;
+        },
+      },
+      // 3. ブランドイメージ・ポジショニング
+      {
+        fields: ['brandImage', 'brandValues', 'brandGoals'],
+        check: (v: EstimateFormValues) => {
+          const brandImage = !!v.brandImage;
+          const brandValues = Array.isArray(v.brandValues) && v.brandValues.length > 0;
+          const brandGoals = Array.isArray(v.brandGoals) && v.brandGoals.length > 0;
+          return brandImage && brandValues && brandGoals;
+        },
+      },
+      // 4. 競合分析・差別化戦略
+      {
+        fields: ['competitorGoodPoints', 'competitorImprovePoints', 'companyStrengths'],
+        check: (v: EstimateFormValues) => {
+          const goodPoints = Array.isArray(v.competitorGoodPoints) && v.competitorGoodPoints.length > 0;
+          const improvePoints = Array.isArray(v.competitorImprovePoints) && v.competitorImprovePoints.length > 0;
+          const strengths = Array.isArray(v.companyStrengths) && v.companyStrengths.length > 0;
+          return goodPoints && improvePoints && strengths;
+        },
+      },
+      // 5. 予算・スケジュール（詳細）
+      {
+        fields: ['budgetDetail', 'deadline'],
+        check: (v: EstimateFormValues) => {
+          return !!v.budgetDetail && !!v.deadline;
+        },
+      },
+      // 6. 現在のウェブサイト状況
+      {
+        fields: ['existingSite'],
+        check: (v: EstimateFormValues) => {
+          return !!v.existingSite;
+        },
+      },
+      // 7. デザイン要望・参考サイト
+      {
+        fields: ['mainColor', 'logoProvided'],
+        check: (v: EstimateFormValues) => {
+          return !!v.mainColor && !!v.logoProvided;
+        },
+      },
+      // 8. 機能要件
+      {
+        fields: ['basicFeatures', 'cmsChoice'],
+        check: (v: EstimateFormValues) => {
+          const basicFeatures = Array.isArray(v.basicFeatures) && v.basicFeatures.length > 0;
+          return basicFeatures && !!v.cmsChoice;
+        },
+      },
+      // 9. SEO・マーケティング要件
+      {
+        fields: ['seoImportance'],
+        check: (v: EstimateFormValues) => {
+          return !!v.seoImportance;
+        },
+      },
+      // 10. 技術・インフラ要件
+      {
+        fields: ['domainChoice', 'serverChoice'],
+        check: (v: EstimateFormValues) => {
+          return !!v.domainChoice && !!v.serverChoice;
+        },
+      },
+      // 11. 保守・運用について
+      {
+        fields: ['maintenanceContract'],
+        check: (v: EstimateFormValues) => {
+          return !!v.maintenanceContract;
+        },
+      },
+      // 12. プロジェクト進行・その他
+      {
+        fields: ['approvalFlow'],
+        check: (v: EstimateFormValues) => {
+          return !!v.approvalFlow;
+        },
+      },
+    ];
+    
+    // すべての必須セクションが完了しているかチェック
+    return requiredSections.every((section) => section.check(watchedValues as EstimateFormValues));
+  }, [currentStep, watchedValues]);
+
   const handleReset = () => {
     reset();
     setIsInitialised(false);
@@ -280,11 +386,24 @@ export const EstimateWizard = () => {
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
+                  disabled={!isBasicInfoValid}
+                  className={clsx(
+                    'inline-flex items-center justify-center rounded-lg px-6 py-2 text-sm font-semibold text-white shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
+                    isBasicInfoValid
+                      ? 'bg-blue-600 hover:bg-blue-700'
+                      : 'cursor-not-allowed bg-slate-400 opacity-50',
+                  )}
                 >
                   {currentStep === 'options' ? '見積を確認する' : '次のステップへ'}
                 </button>
               </div>
+              {!isBasicInfoValid && currentStep === 'basic' && (
+                <div className="flex justify-end pt-2">
+                  <p className="text-xs text-red-600">
+                    必須項目が入力されていません。すべての必須セクションを完了してください。
+                  </p>
+                </div>
+              )}
             </form>
           )}
         </FormProvider>

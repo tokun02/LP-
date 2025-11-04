@@ -153,6 +153,7 @@ export const BasicInfoStep = () => {
     register,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useFormContext<EstimateFormValues>();
 
@@ -260,6 +261,84 @@ export const BasicInfoStep = () => {
     }
   };
 
+  // ヒアリングセクションのリセット関数
+  const handleResetHearing = () => {
+    if (confirm('ヒアリング内容をすべてリセットしますか？この操作は取り消せません。')) {
+      // ヒアリング関連のフィールドをリセット
+      const hearingFields: Partial<EstimateFormValues> = {
+        companyName: '',
+        contactPersonName: '',
+        contactPosition: '',
+        contactEmail: '',
+        contactPhone: '',
+        location: '',
+        industry: undefined,
+        industryOther: '',
+        employeeSize: undefined,
+        projectPurpose: [],
+        projectPurposeOther: '',
+        pageStructureRequest: '',
+        targetGender: undefined,
+        targetAgeGroups: [],
+        targetCharacteristics: '',
+        brandImage: '',
+        brandValues: [],
+        brandGoals: [],
+        competitorUrl: '',
+        competitorGoodPoints: [],
+        competitorImprovePoints: [],
+        companyStrengths: [],
+        differentiationIdeas: [],
+        budgetDetail: '',
+        budgetNote: '',
+        deadline: undefined,
+        deadlineSpecific: '',
+        existingSite: undefined,
+        existingSiteUrl: '',
+        currentSiteIssues: [],
+        monthlyVisitCount: '',
+        mainColor: '',
+        logoProvided: undefined,
+        photoMaterials: [],
+        photoShortageHandling: '',
+        basicFeatures: [],
+        advancedFeatures: [],
+        cmsChoice: undefined,
+        updateStyle: undefined,
+        seoImportance: undefined,
+        targetKeywords: '',
+        currentMarketing: [],
+        snsIntegration: [],
+        ga4Status: undefined,
+        domainChoice: undefined,
+        domainExisting: '',
+        serverChoice: undefined,
+        sslChoice: undefined,
+        devicesSupported: [],
+        maintenanceContract: undefined,
+        backupChoice: undefined,
+        securityImportance: undefined,
+        approvalFlow: undefined,
+        approvalFlowDetails: '',
+        pastWebExperience: undefined,
+        pastWebExperienceDetails: '',
+        priorities: [],
+        otherRequests: '',
+        feedback: '',
+        notes: '',
+      };
+      
+      // 現在の値を取得して、ヒアリングフィールドのみリセット
+      const currentValues = watch();
+      const resetValues = {
+        ...currentValues,
+        ...hearingFields,
+      };
+      
+      reset(resetValues);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* グローバルコントロール */}
@@ -284,6 +363,30 @@ export const BasicInfoStep = () => {
             全て折りたたみ
           </button>
         </div>
+      </div>
+
+      {/* リセットボタン */}
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={handleResetHearing}
+          className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          ヒアリングをリセット
+        </button>
       </div>
       {/* 1. 基本情報（詳細） */}
       <AccordionSection

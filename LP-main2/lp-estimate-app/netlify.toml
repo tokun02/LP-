@@ -7,4 +7,13 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# 環境変数の設定（本番環境用）
+# 注意: 実際の環境変数はNetlifyダッシュボードで設定してください
+[build.environment]
+  NODE_VERSION = "18"
+
+# 注意: @netlify/plugin-nextjs が自動的にリダイレクトを設定します
+# 上記のリダイレクト設定は不要です（プラグインが処理します）
 

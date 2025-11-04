@@ -21,12 +21,12 @@ export const OptionsStep = () => {
     setValue,
     register,
     watch,
+    reset,
     formState: { errors },
   } = useFormContext<EstimateFormValues>();
 
   const selectedOptions = watch('selectedOptions') ?? [];
   const includeTax = watch('includeTax');
-  const multilingualCount = watch('multilingualCount');
   const basePackage = watch('basePackage');
   const projectType = watch('projectType') || 'new';
 
@@ -92,14 +92,61 @@ export const OptionsStep = () => {
     setValue('selectedOptions', next, { shouldDirty: true, shouldValidate: true });
   };
 
+  // 機能・オプション選択のリセット関数
+  const handleResetOptions = () => {
+    if (confirm('機能・オプション選択をすべてリセットしますか？この操作は取り消せません。')) {
+      // オプション関連のフィールドをリセット
+      const currentValues = watch();
+      const resetValues = {
+        ...currentValues,
+        selectedOptions: [],
+        contactDestination: undefined,
+        contactAutoReply: undefined,
+        contactCrmType: undefined,
+        reservationUnit: undefined,
+        reservationCalendar: undefined,
+        reservationPrepay: undefined,
+        translationSupport: undefined,
+        cmsUpdateOwner: undefined,
+        cmsUpdateFrequency: undefined,
+        notes: '',
+      };
+      
+      reset(resetValues);
+    }
+  };
+
   return (
     <div className="space-y-10">
       <section className="space-y-6">
-        <header>
-          <h3 className="text-lg font-semibold text-slate-900">追加オプションを選択</h3>
-          <p className="text-sm text-slate-500">
-            機能追加やマーケティング支援など、案件に必要なオプションを選択してください。
-          </p>
+        <header className="flex items-start justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">追加オプションを選択</h3>
+            <p className="text-sm text-slate-500">
+              機能追加やマーケティング支援など、案件に必要なオプションを選択してください。
+            </p>
+          </div>
+          {/* リセットボタン */}
+          <button
+            type="button"
+            onClick={handleResetOptions}
+            className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            オプションをリセット
+          </button>
         </header>
 
         {/* サジェスト: 個別3つがすべて選択されている場合、パックへの切替を提案 */}

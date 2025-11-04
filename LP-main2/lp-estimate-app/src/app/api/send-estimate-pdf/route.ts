@@ -76,6 +76,14 @@ export async function POST(request: NextRequest) {
       console.log('=== 見積PDF送信（開発モード）===');
       console.log('環境変数が設定されていないため、メール送信をスキップしました');
       console.log('設定が必要な環境変数: DEV_EMAIL, SMTP_USER, SMTP_PASS, SMTP_HOST, SMTP_PORT, FROM_EMAIL');
+      console.log('現在の環境変数状態:', {
+        DEV_EMAIL: DEV_EMAIL ? '設定済み' : '未設定',
+        SMTP_USER: SMTP_USER ? '設定済み' : '未設定',
+        SMTP_PASS: SMTP_PASS ? '設定済み（' + SMTP_PASS.length + '文字）' : '未設定',
+        SMTP_HOST: SMTP_HOST,
+        SMTP_PORT: SMTP_PORT,
+        FROM_EMAIL: FROM_EMAIL ? '設定済み' : '未設定',
+      });
       console.log('案件情報:', {
         companyName: body.values.companyName || body.values.clientName || '案件',
         projectName: body.values.projectName || '新規案件',
@@ -87,6 +95,18 @@ export async function POST(request: NextRequest) {
         message: '開発環境: メール送信をスキップしました（環境変数が設定されていません）',
         skipped: true,
       });
+    }
+
+    // 環境変数が設定されているが、認証情報が正しくない可能性がある場合のチェック
+    if (!SMTP_USER || !SMTP_PASS) {
+      console.error('❌ SMTP認証情報が設定されていません');
+      return NextResponse.json(
+        {
+          error: 'SMTP認証情報が設定されていません',
+          hint: '.env.localファイルにSMTP_USERとSMTP_PASSを設定してください',
+        },
+        { status: 500 },
+      );
     }
 
     console.log('📧 PDF生成開始...');
@@ -127,6 +147,12 @@ export async function POST(request: NextRequest) {
         user: SMTP_USER,
         pass: SMTP_PASS,
       },
+      ...(isDevelopment && {
+        // 開発環境でのみSSL証明書の検証をスキップ（本番環境では推奨されません）
+        tls: {
+          rejectUnauthorized: false,
+        },
+      }),
     });
 
     // メール送信
@@ -186,8 +212,38 @@ export async function POST(request: NextRequest) {
       message: '見積PDFとヒアリングPDFをメール送信しました',
     });
   } catch (error) {
-    console.error('Error sending estimate PDF:', error);
-    // 開発環境では詳細なエラー情報を返す
+    console.error('❌ Error sending estimate PDF:', error);
+    
+    // 認証エラーの場合、詳細な情報を提供
+    if (error instanceof Error && 'code' in error && error.code === 'EAUTH') {
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      console.error('認証エラーが発生しました。以下を確認してください:');
+      console.error('1. Gmailの2段階認証が有効になっているか');
+      console.error('2. アプリパスワードが正しく生成されているか');
+      console.error('3. .env.localファイルのSMTP_USERとSMTP_PASSが正しく設定されているか');
+      console.error('4. SMTP_USERはメールアドレス（例: your-email@gmail.com）');
+      console.error('5. SMTP_PASSは16文字のアプリパスワード（スペースなし）');
+      
+      return NextResponse.json(
+        {
+          error: 'Gmail認証に失敗しました',
+          details: 'ユーザー名またはパスワードが正しくありません',
+          hint: isDevelopment
+            ? [
+                '1. Gmailの2段階認証を有効にしてください',
+                '2. アプリパスワードを生成してください（https://myaccount.google.com/apppasswords）',
+                '3. .env.localファイルのSMTP_USERとSMTP_PASSを確認してください',
+                '4. SMTP_USER: メールアドレス（例: your-email@gmail.com）',
+                '5. SMTP_PASS: 16文字のアプリパスワード（スペースなし）',
+                '6. 開発サーバーを再起動してください',
+              ]
+            : 'Gmailの認証情報を確認してください',
+        },
+        { status: 500 },
+      );
+    }
+
+    // その他のエラー
     const isDevelopment = process.env.NODE_ENV !== 'production';
     return NextResponse.json(
       {
