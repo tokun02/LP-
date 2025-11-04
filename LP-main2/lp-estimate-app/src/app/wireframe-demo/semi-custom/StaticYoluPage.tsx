@@ -53,7 +53,14 @@ export function StaticYoluPage({ bodyHtml }: StaticYoluPageProps) {
         link.crossOrigin = crossOrigin;
       }
       Object.entries(rest).forEach(([key, value]) => {
-        link.setAttribute(key, value);
+        if (value == null) {
+          return;
+        }
+        if (typeof value === "string") {
+          link.setAttribute(key, value);
+        } else {
+          link.setAttribute(key, String(value));
+        }
       });
       document.head.appendChild(link);
       createdLinks.push(link);
