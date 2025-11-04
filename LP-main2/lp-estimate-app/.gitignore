@@ -42,3 +42,7 @@ pnpm-lock.yaml
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore nested LP-main3 directory
+LP-main3/
+../../LP-main3/
