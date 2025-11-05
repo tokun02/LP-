@@ -24,7 +24,7 @@ const NAV_LINKS = [
 const fadeUp = (delay = 0, distance = 26) => ({
   initial: { opacity: 0, y: distance },
   whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: "easeOut" },
+  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
   viewport: { once: true },
 });
 
@@ -140,28 +140,31 @@ export default function StandardTemplateDemo() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(248,250,252,0.08),_transparent_35%)]" />
       </div>
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div>
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.5em] text-white/70">{BRAND}</p>
-            <p className="text-[0.65rem] text-white/50">Estimate workflow for creative teams</p>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:py-4">
+          <div className="min-w-0">
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.5em] text-white/70 truncate">{BRAND}</p>
+            <p className="hidden sm:block text-[0.65rem] text-white/50">Estimate workflow for creative teams</p>
           </div>
           <nav className="hidden items-center gap-6 text-[0.65rem] font-semibold uppercase tracking-[0.35em] text-white/50 md:flex">
             {NAV_LINKS.map((link) => (
-              <a key={link.href} href={link.href} className="transition hover:text-white">
+              <a key={link.href} href={link.href} className="transition hover:text-white min-h-[44px] flex items-center">
                 {link.label}
               </a>
             ))}
           </nav>
-          <div className="flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em]">
+          <button className="md:hidden rounded-xl px-3 py-2 border border-white/20 text-white/80 text-xs font-semibold uppercase tracking-[0.35em] min-h-[44px]">
+            メニュー
+          </button>
+          <div className="hidden md:flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.35em]">
             <a
               href="mailto:hello@lp-estimate.app"
-              className="rounded-full border border-white/20 px-4 py-2 text-white/80 transition hover:border-white hover:text-white"
+              className="rounded-full border border-white/20 px-4 py-2 text-white/80 transition hover:border-white hover:text-white min-h-[44px] flex items-center"
             >
               Deck
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-cyan-400 via-sky-500 to-indigo-500 px-4 py-2 text-slate-950"
+              className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-cyan-400 via-sky-500 to-indigo-500 px-4 py-2 text-slate-950 min-h-[44px]"
             >
               Demo
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -172,39 +175,39 @@ export default function StandardTemplateDemo() {
 
       <main className="relative z-10">
         <section id="hero" className="border-b border-white/10">
-          <div className="mx-auto max-w-6xl px-4 py-20">
-            <div className="grid gap-12 md:grid-cols-[1.05fr,0.95fr]">
-              <motion.div className="space-y-8" {...fadeUp()}>
+          <div className="mx-auto w-full container-pad py-12 sm:py-16 md:py-20">
+            <div className="grid gap-8 sm:gap-12 grid-cols-1 md:grid-cols-[1.05fr,0.95fr]">
+              <motion.div className="space-y-6 sm:space-y-8" {...fadeUp()}>
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.4em] text-white/70">
                   Estimate as a Service
                 </span>
-                <h1 className="text-3xl font-semibold leading-tight text-slate-50 md:text-5xl">
+                <h1 className="font-semibold leading-tight text-slate-50 text-[clamp(24px,6vw,48px)]">
                   テンプレート × カスタムで
                   <span className="block text-transparent bg-gradient-to-r from-cyan-300 via-blue-200 to-indigo-200 bg-clip-text">
                     ハイエンドな見積体験を共創
                   </span>
                 </h1>
-                <p className="text-base leading-relaxed text-white/70">
+                <p className="leading-relaxed text-white/70 text-[clamp(14px,3.8vw,16px)] leading-[1.65]">
                   LP Estimate App は、ヒアリング項目・構成案・オプション・サマリーがライブ連動するエンタープライズ志向の見積ワークフローです。テンプレートをベースに局所カスタムを差し込み、スピード・再現性・余白あるデザインを同時実現します。
                 </p>
-                <div className="flex flex-wrap gap-3 text-[0.65rem] text-white/70">
+                <div className="flex flex-wrap gap-2 sm:gap-3 text-[0.65rem] text-white/70">
                   {HERO_FEATURES.map((item) => (
-                    <span key={item} className="rounded-full border border-white/15 px-4 py-1 backdrop-blur">
+                    <span key={item} className="rounded-full border border-white/15 px-3 sm:px-4 py-1 backdrop-blur">
                       {item}
                     </span>
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-4 text-[0.7rem] font-semibold uppercase tracking-[0.35em]">
+                <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:gap-4 text-[0.7rem] font-semibold uppercase tracking-[0.35em]">
                   <a
                     href="#features"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2 text-white transition hover:border-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-5 py-3 text-white transition hover:border-white min-h-[44px] w-full sm:w-auto"
                   >
                     System layers
                     <ArrowUpRight className="h-3.5 w-3.5" />
                   </a>
                   <a
                     href="mailto:hello@lp-estimate.app"
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-slate-950"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-slate-950 min-h-[44px] w-full sm:w-auto"
                   >
                     Send briefing
                   </a>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
 import './globals.css';
@@ -7,10 +7,10 @@ const noto = localFont({
   variable: '--font-sans',
   display: 'swap',
   src: [
-    { path: '../../public/fonts/static/NotoSansJP-Light.ttf', weight: '300', style: 'normal' },
-    { path: '../../public/fonts/static/NotoSansJP-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../../public/fonts/static/NotoSansJP-Medium.ttf', weight: '500', style: 'normal' },
-    { path: '../../public/fonts/static/NotoSansJP-Bold.ttf', weight: '700', style: 'normal' },
+    { path: '../fonts/static/NotoSansJP-Light.ttf', weight: '300', style: 'normal' },
+    { path: '../fonts/static/NotoSansJP-Regular.ttf', weight: '400', style: 'normal' },
+    { path: '../fonts/static/NotoSansJP-Medium.ttf', weight: '500', style: 'normal' },
+    { path: '../fonts/static/NotoSansJP-Bold.ttf', weight: '700', style: 'normal' },
   ],
 });
 
@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

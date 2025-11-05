@@ -36,7 +36,7 @@ export default function SemiCustomPage() {
   return (
     <div ref={containerRef} className="min-h-screen bg-black text-white overflow-hidden">
       {/* ヒーローセクション */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[88vh] sm:h-screen flex items-center justify-center overflow-hidden section-y">
         {/* 背景グラデーション */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-black" />
         
@@ -57,7 +57,8 @@ export default function SemiCustomPage() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           >
             <motion.h1
-              className="text-7xl md:text-9xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent"
+              className="font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent"
+              style={{ fontSize: 'clamp(36px, 12vw, 128px)' }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.2 }}
@@ -65,13 +66,14 @@ export default function SemiCustomPage() {
               セミオーダー
             </motion.h1>
             <motion.p
-              className="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed"
+              className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed"
+              style={{ fontSize: 'clamp(16px, 4vw, 24px)', lineHeight: '1.65' }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.4 }}
             >
               テンプレートをベースに、あなたのブランドに合わせてカスタマイズ。
-              <br />
+              <br className="hidden sm:block" />
               高品質でありながら、効率的に制作できます。
             </motion.p>
             <motion.div
@@ -79,7 +81,7 @@ export default function SemiCustomPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.6 }}
             >
-              <button className="group relative px-8 py-4 bg-white text-black rounded-full font-semibold text-lg overflow-hidden transition-all hover:scale-105">
+              <button className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-full font-semibold text-base sm:text-lg overflow-hidden transition-all hover:scale-105 min-h-[44px] w-full sm:w-auto max-w-sm mx-auto sm:mx-0">
                 <span className="relative z-10">制作を始める</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
@@ -89,7 +91,7 @@ export default function SemiCustomPage() {
 
         {/* スクロールインジケーター */}
         <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
@@ -109,7 +111,7 @@ export default function SemiCustomPage() {
       </section>
 
       {/* 特徴セクション */}
-      <section className="relative min-h-screen py-32 px-4">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 section-y">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}

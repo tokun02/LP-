@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { FormProvider, type FieldPath, useForm } from 'react-hook-form';
+import { FormProvider, type FieldPath, type Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { BasicInfoStep } from '@/components/estimate/BasicInfoStep';
@@ -73,7 +73,7 @@ const StepIndicator = ({
 }) => {
   const currentIndex = steps.findIndex((step) => step.id === currentStep);
   return (
-    <ol className="grid gap-4 md:grid-cols-4">
+    <ol className="grid gap-2.5 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
       {steps.map((step, index) => {
         const status = index === currentIndex ? 'current' : index < currentIndex ? 'complete' : 'upcoming';
         return (
@@ -82,25 +82,25 @@ const StepIndicator = ({
               type="button"
               onClick={() => onSelect(step.id)}
               className={clsx(
-                'flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
-                status === 'current' && 'border-blue-500 bg-blue-50 text-blue-700',
-                status === 'complete' && 'border-emerald-500 bg-emerald-50 text-emerald-700',
-                status === 'upcoming' && 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
+                'flex w-full items-start gap-3 rounded-xl border-2 px-3 py-2.5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 min-h-[48px] sm:gap-4 sm:px-5 sm:py-4 sm:min-h-[56px]',
+                status === 'current' && 'border-blue-500 bg-blue-50 text-blue-900 shadow-sm',
+                status === 'complete' && 'border-emerald-500 bg-emerald-50 text-emerald-900',
+                status === 'upcoming' && 'border-slate-300 bg-white text-slate-700 hover:border-blue-300 hover:bg-slate-50',
               )}
             >
               <span
                 className={clsx(
-                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-semibold',
+                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold sm:h-10 sm:w-10 sm:text-base',
                   status === 'current' && 'border-blue-500 bg-blue-100 text-blue-700',
                   status === 'complete' && 'border-emerald-500 bg-emerald-100 text-emerald-700',
-                  status === 'upcoming' && 'border-slate-300 bg-slate-100 text-slate-500',
+                  status === 'upcoming' && 'border-slate-300 bg-slate-100 text-slate-600',
                 )}
               >
                 {index + 1}
               </span>
               <span>
-                <span className="block text-sm font-semibold">{step.label}</span>
-                <span className="mt-1 block text-xs text-slate-500">{step.description}</span>
+                <span className="block text-sm sm:text-sm font-semibold text-slate-900">{step.label}</span>
+                <span className="mt-1 block text-xs sm:text-xs text-slate-600 leading-relaxed">{step.description}</span>
               </span>
             </button>
           </li>
@@ -115,7 +115,7 @@ export const EstimateWizard = () => {
   const [isInitialised, setIsInitialised] = useState(false);
 
   const formMethods = useForm<EstimateFormValues>({
-    resolver: zodResolver(estimateSchema),
+    resolver: zodResolver(estimateSchema) as Resolver<EstimateFormValues>,
     defaultValues: values,
     mode: 'onChange',
   });
@@ -338,18 +338,22 @@ export const EstimateWizard = () => {
   const progress = ((currentIndex + 1) / steps.length) * 100;
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl shadow-blue-100/40 backdrop-blur">
-      <div className="space-y-6">
+    <div className="rounded-2xl border border-slate-200 bg-white/90 card-compact sm:p-6 shadow-xl shadow-blue-100/40 backdrop-blur">
+      <div className="space-y-4 sm:space-y-6">
         <StepIndicator currentStep={currentStep} onSelect={goToStep} />
         <div className="h-1 w-full rounded-full bg-slate-100">
           <div
             className="h-full rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-400 transition-all"
             style={{ width: `${progress}%` }}
+            role="progressbar"
+            aria-valuenow={Math.round(progress)}
+            aria-valuemin={0}
+            aria-valuemax={100}
           />
         </div>
       </div>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="mt-6 sm:mt-10 grid gap-6 sm:gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
         <FormProvider {...formMethods}>
           {isSummary ? (
             <div className="space-y-8">
@@ -360,7 +364,7 @@ export const EstimateWizard = () => {
             </div>
           ) : (
             <form
-              className="space-y-8"
+              className="space-y-6 sm:space-y-8"
               onSubmit={(event) => {
                 event.preventDefault();
                 goNext();
@@ -370,15 +374,15 @@ export const EstimateWizard = () => {
               <div className="lg:hidden">
                 <EstimateSummaryPanel breakdown={breakdown} />
               </div>
-              <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-between">
+              <div className="flex flex-col gap-ultra pt-3 sm:flex-row sm:justify-between sm:gap-3">
                 <button
                   type="button"
                   onClick={goBack}
                   className={clsx(
-                    'inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    'btn btn-outline btn-sm w-full sm:w-auto',
                     currentIndex === 0
-                      ? 'cursor-not-allowed border-slate-200 text-slate-300'
-                      : 'border-slate-300 text-slate-600 hover:bg-slate-100',
+                      ? 'cursor-not-allowed opacity-50'
+                      : '',
                   )}
                   disabled={currentIndex === 0}
                 >
@@ -388,10 +392,8 @@ export const EstimateWizard = () => {
                   type="submit"
                   disabled={!isBasicInfoValid}
                   className={clsx(
-                    'inline-flex items-center justify-center rounded-lg px-6 py-2 text-sm font-semibold text-white shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-                    isBasicInfoValid
-                      ? 'bg-blue-600 hover:bg-blue-700'
-                      : 'cursor-not-allowed bg-slate-400 opacity-50',
+                    'btn btn-primary btn-sm w-full sm:w-auto',
+                    !isBasicInfoValid && 'cursor-not-allowed opacity-50',
                   )}
                 >
                   {currentStep === 'options' ? '見積を確認する' : '次のステップへ'}

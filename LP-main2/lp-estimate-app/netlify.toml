@@ -1,6 +1,10 @@
 [build]
+  # アプリがあるサブディレクトリを相対パスで指定
   base = "LP-main3/LP-main2/lp-estimate-app"
-  command = "npm run build"
+  # npm ci を使用して依存関係をクリーンインストール
+  command = "npm ci && npm run build"
+  # Next.js on Netlify はプラグインが publish をよしなに扱うので指定なしでも可
+  # 明示的に指定する場合は .next を使用
   publish = ".next"
 
 [[plugins]]
@@ -22,4 +26,5 @@
 # [git]
 #   url = "https://github.com/tokun02/LP-.git"
 #   branch = "main3"
+
 

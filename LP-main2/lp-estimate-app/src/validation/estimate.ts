@@ -45,8 +45,8 @@ import {
 
 const SITE_PURPOSE_VALUES_LOCAL = basePackages.map((pkg) => pkg.name as SitePurpose);
 const sitePurposeEnum = z.enum(SITE_PURPOSE_VALUES_LOCAL as [SitePurpose, ...SitePurpose[]]);
-const budgetEnum = z.enum(BUDGET_RANGE_OPTIONS as [BudgetRange, ...BudgetRange[]]);
-const serverDomainEnum = z.enum(SERVER_DOMAIN_OPTIONS as [ServerDomainStatus, ...ServerDomainStatus[]]);
+const budgetEnum = z.enum([...BUDGET_RANGE_OPTIONS] as unknown as [BudgetRange, ...BudgetRange[]]);
+const serverDomainEnum = z.enum([...SERVER_DOMAIN_OPTIONS] as unknown as [ServerDomainStatus, ...ServerDomainStatus[]]);
 
 const basePackageEnum = z.enum(basePackages.map((pkg) => pkg.code) as [BasePackageCode, ...BasePackageCode[]]);
 const designIntensityEnum = z.enum(
@@ -106,57 +106,57 @@ export const estimateSchema = z.object({
   basePackage: basePackageEnum,
   projectType: z.enum(['new', 'renewal']).optional(),
   pageCount: z
-    .number({ invalid_type_error: 'ページ数は数値で入力してください。' })
+    .number({ message: 'ページ数は数値で入力してください。' })
     .min(1, { message: 'ページ数は1以上で入力してください。' })
     .max(50, { message: 'ページ数は50ページ以内で入力してください。' }),
   designIntensity: designIntensityEnum,
   multilingualCount: z
-    .number({ invalid_type_error: '多言語対応数は数値で入力してください。' })
+    .number({ message: '多言語対応数は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .max(6, { message: '最大6言語まで対応可能です。' }),
   wireframeType: z.enum(WIREFRAME_OPTIONS as unknown as [string, ...string[]]).optional(),
   homepageBasePrice: z
-    .number({ invalid_type_error: 'ホームページの料金は数値で入力してください。' })
+    .number({ message: 'ホームページの料金は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
   homepageIncludedPages: z
-    .number({ invalid_type_error: 'ホームページの基本想定ページ数は数値で入力してください。' })
+    .number({ message: 'ホームページの基本想定ページ数は数値で入力してください。' })
     .min(1, { message: '1ページ以上を入力してください。' })
     .max(50, { message: '50ページ以内で入力してください。' })
     .optional(),
   recruitmentBasePrice: z
-    .number({ invalid_type_error: '採用サイトの料金は数値で入力してください。' })
+    .number({ message: '採用サイトの料金は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
   recruitmentIncludedPages: z
-    .number({ invalid_type_error: '採用サイトの基本想定ページ数は数値で入力してください。' })
+    .number({ message: '採用サイトの基本想定ページ数は数値で入力してください。' })
     .min(1, { message: '1ページ以上を入力してください。' })
     .max(50, { message: '50ページ以内で入力してください。' })
     .optional(),
   landingBasePrice: z
-    .number({ invalid_type_error: 'ランディングページの料金は数値で入力してください。' })
+    .number({ message: 'ランディングページの料金は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
   landingIncludedPages: z
-    .number({ invalid_type_error: 'ランディングページの基本想定ページ数は数値で入力してください。' })
+    .number({ message: 'ランディングページの基本想定ページ数は数値で入力してください。' })
     .min(1, { message: '1ページ以上を入力してください。' })
     .max(50, { message: '50ページ以内で入力してください。' })
     .optional(),
   ecommerceBasePrice: z
-    .number({ invalid_type_error: 'ECサイトの料金は数値で入力してください。' })
+    .number({ message: 'ECサイトの料金は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
   ecommerceIncludedPages: z
-    .number({ invalid_type_error: 'ECサイトの基本想定ページ数は数値で入力してください。' })
+    .number({ message: 'ECサイトの基本想定ページ数は数値で入力してください。' })
     .min(1, { message: '1ページ以上を入力してください。' })
     .max(50, { message: '50ページ以内で入力してください。' })
     .optional(),
   ownedMediaBasePrice: z
-    .number({ invalid_type_error: 'オウンドメディアの料金は数値で入力してください。' })
+    .number({ message: 'オウンドメディアの料金は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
   ownedMediaIncludedPages: z
-    .number({ invalid_type_error: 'オウンドメディアの基本想定ページ数は数値で入力してください。' })
+    .number({ message: 'オウンドメディアの基本想定ページ数は数値で入力してください。' })
     .min(1, { message: '1ページ以上を入力してください。' })
     .max(50, { message: '50ページ以内で入力してください。' })
     .optional(),
@@ -174,7 +174,7 @@ export const estimateSchema = z.object({
     .optional()
     .or(z.literal('')),
   kpiMonthlyTarget: z
-    .number({ invalid_type_error: '月間目標値は数値で入力してください。' })
+    .number({ message: '月間目標値は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
     .optional(),
 
@@ -203,7 +203,7 @@ export const estimateSchema = z.object({
     .array(z.enum(PROJECT_PURPOSE_OPTIONS as unknown as [string, ...string[]]))
     .max(PROJECT_PURPOSE_OPTIONS.length)
     .optional(),
-  siteType: z.enum(SITE_TYPE_OPTIONS as unknown as [string, ...string[]]).optional(),
+  siteType: z.enum(SITE_TYPE_OPTIONS as unknown as [string, ...string[]]).default('ランディングページ'),
   pageRange: z.enum(PAGE_RANGE_OPTIONS as unknown as [string, ...string[]]).optional(),
   brandImage: z.enum(BRAND_IMAGE_OPTIONS as unknown as [string, ...string[]]).optional(),
   brandValues: z
@@ -327,3 +327,6 @@ export const estimateSchema = z.object({
 });
 
 export type EstimateSchema = typeof estimateSchema;
+
+// SSOT: EstimateFormValuesはスキーマから生成
+export type EstimateFormValues = z.infer<typeof estimateSchema>;

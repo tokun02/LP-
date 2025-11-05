@@ -2,6 +2,7 @@ import type { EstimateBreakdown, EstimateFormValues, FormSection } from '@/types
 import { calculateEstimate } from '@/utils/calcEstimate';
 import { SITE_PURPOSE_OPTIONS } from '@/data/form-options';
 import { basePackages } from '@/data/tariffs';
+import { estimateSchema } from '@/validation/estimate';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -10,7 +11,8 @@ const STORAGE_KEY = 'web-estimate-app:v1';
 const defaultSitePurpose = SITE_PURPOSE_OPTIONS[0];
 const defaultPackage = basePackages.find((pkg) => pkg.code === defaultSitePurpose.value) ?? basePackages[0];
 
-export const defaultFormValues: EstimateFormValues = {
+// スキーマのdefault/optionalに従って安全に初期値を生成（SSOT: Single Source of Truth）
+export const defaultFormValues: EstimateFormValues = estimateSchema.parse({
   projectName: '',
   clientName: '',
   contactEmail: '',
@@ -31,10 +33,8 @@ export const defaultFormValues: EstimateFormValues = {
   maintenance: 'なし',
   notes: '',
   includeTax: true,
-
-  // 追加: KPI/準備度/法務 初期値（既存のフィールドがある場合は保持）
-  // 新規追加フィールドはすべてundefinedまたは空の初期値で開始
-};
+  // siteTypeはスキーマでdefault('LP')が設定されているため、自動的に埋まる
+});
 
 const hasChanged = (
   prev: EstimateFormValues,

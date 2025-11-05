@@ -1,4 +1,5 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import React from 'react';
+import { Document, Page, StyleSheet, Text, View, type DocumentProps } from '@react-pdf/renderer';
 
 import type { EstimateFormValues } from '@/types/estimate';
 
@@ -73,6 +74,7 @@ type HearingPdfDocumentProps = {
   generatedAt?: Date;
 };
 
+// 既存のコンポーネント（後方互換性のため残す）
 export const HearingPdfDocument = ({ values, generatedAt = new Date() }: HearingPdfDocumentProps) => {
   const formatValue = (value: unknown): string => {
     if (!value) return '未入力';
@@ -485,4 +487,13 @@ export const HearingPdfDocument = ({ values, generatedAt = new Date() }: Hearing
     </Document>
   );
 };
+
+// ファクトリ関数：ReactElement<DocumentProps>を返す
+export function createHearingDocument({
+  values,
+  generatedAt = new Date(),
+}: HearingPdfDocumentProps): React.ReactElement<DocumentProps> {
+  // HearingPdfDocumentは既にDocumentを含んでいるので、そのまま使用して型アサーション
+  return React.createElement(HearingPdfDocument, { values, generatedAt }) as React.ReactElement<DocumentProps>;
+}
 

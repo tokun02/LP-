@@ -77,17 +77,17 @@ const AccordionSection = ({
   return (
     <section
       id={id}
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md"
+      className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md"
     >
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 p-6 text-left transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+        className="flex w-full items-center justify-between gap-2 p-2 sm:p-6 text-left transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 min-h-[44px] sm:min-h-[56px]"
       >
-        <div className="flex items-start gap-4 flex-1">
+        <div className="flex items-start gap-2 flex-1 sm:gap-4">
           <div
             className={clsx(
-              'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 font-bold text-sm transition-colors',
+              'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 font-bold text-[11px] transition-colors sm:h-12 sm:w-12 sm:text-base sm:rounded-xl',
               isCompleted
                 ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
                 : isPartiallyCompleted
@@ -100,15 +100,15 @@ const AccordionSection = ({
             {isCompleted ? '✓' : number}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+            <div className="flex items-center gap-1 flex-wrap">
+              <h3 className="title-compact sm:text-xl text-slate-900 leading-tight">{title}</h3>
               {isRequired && (
-                <span className="shrink-0 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700">
+                <span className="shrink-0 rounded-full bg-orange-100 px-1 py-0.5 text-[8px] sm:text-xs font-semibold text-orange-700">
                   必須
                 </span>
               )}
             </div>
-            <p className="mt-1 text-sm text-slate-500">{description}</p>
+            <p className="mt-0.5 lead-compact sm:text-base text-slate-700">{description}</p>
             {isPartiallyCompleted && (
               <div className="mt-2 flex items-center gap-2">
                 <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
@@ -142,7 +142,7 @@ const AccordionSection = ({
           isExpanded ? 'max-h-[10000px] opacity-100' : 'max-h-0 opacity-0',
         )}
       >
-        <div className="border-t border-slate-100 bg-slate-50/50 p-6">{children}</div>
+        <div className="border-t border-slate-200 bg-slate-50/50 card-ultra sm:p-6">{children}</div>
       </div>
     </section>
   );
@@ -156,6 +156,9 @@ export const BasicInfoStep = () => {
     reset,
     formState: { errors },
   } = useFormContext<EstimateFormValues>();
+
+  // 「該当なし」チェックボックスの状態を管理
+  const [notApplicableFields, setNotApplicableFields] = useState<Set<string>>(new Set());
 
   // アコーディオンの展開状態を管理（必須セクションはデフォルトで展開）
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
@@ -342,23 +345,23 @@ export const BasicInfoStep = () => {
   return (
     <div className="space-y-6">
       {/* グローバルコントロール */}
-      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
+      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50 card-ultra gap-ultra flex-wrap">
         <div>
-          <p className="text-sm font-semibold text-slate-700">セクションをまとめて操作</p>
-          <p className="mt-1 text-xs text-slate-500">全てのセクションを展開/折りたたみできます</p>
+          <p className="label-compact font-semibold text-slate-700">セクションをまとめて操作</p>
+          <p className="mt-0.5 hint-compact">全てのセクションを展開/折りたたみできます</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-ultra">
           <button
             type="button"
             onClick={expandAll}
-            className="rounded-lg border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+            className="btn btn-outline btn-sm"
           >
             全て展開
           </button>
           <button
             type="button"
             onClick={collapseAll}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/40"
+            className="btn btn-outline btn-sm"
           >
             全て折りたたみ
           </button>
@@ -370,10 +373,10 @@ export const BasicInfoStep = () => {
         <button
           type="button"
           onClick={handleResetHearing}
-          className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+          className="btn btn-outline btn-sm btn-reset-red"
         >
           <svg
-            className="h-4 w-4"
+            className="h-3.5 w-3.5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -393,43 +396,66 @@ export const BasicInfoStep = () => {
         id="basic-info"
         number={1}
         title="基本情報（詳細）"
-        description="より詳細な情報をお聞かせください。"
+        description="より詳細な情報をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('basic-info')}
         onToggle={() => toggleSection('basic-info')}
         isRequired={true}
         completionRate={calculateCompletion('basic-info')}
       >
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-ultra sm:gap-6 grid-cols-1 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
               会社名
             </label>
             <input
               type="text"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-lg border-2 border-slate-300 field-compact input-zoom-safe shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[44px] bg-white sm:px-4 sm:py-3.5 sm:text-base sm:min-h-[52px] sm:rounded-xl"
               placeholder="例: 株式会社サンプル"
               {...register('companyName')}
             />
             <FormError message={errors.companyName?.message} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
               ご担当者名
             </label>
             <input
               type="text"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-lg border-2 border-slate-300 field-compact input-zoom-safe shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[44px] bg-white sm:px-4 sm:py-3.5 sm:text-base sm:min-h-[52px] sm:rounded-xl"
               placeholder="例: 山田太郎"
               {...register('contactPersonName')}
             />
             <FormError message={errors.contactPersonName?.message} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">役職・部署</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block label-compact font-medium text-slate-700">役職・部署</label>
+              <label className="flex items-center gap-1 text-[10px] text-slate-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={notApplicableFields.has('contactPosition')}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setNotApplicableFields((prev) => new Set(prev).add('contactPosition'));
+                      setValue('contactPosition', '', { shouldDirty: true });
+                    } else {
+                      setNotApplicableFields((prev) => {
+                        const next = new Set(prev);
+                        next.delete('contactPosition');
+                        return next;
+                      });
+                    }
+                  }}
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+                />
+                <span>該当なし</span>
+              </label>
+            </div>
             <input
               type="text"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
               placeholder="例: マーケティング部長"
+              disabled={notApplicableFields.has('contactPosition')}
               {...register('contactPosition')}
             />
           </div>
@@ -453,23 +479,46 @@ export const BasicInfoStep = () => {
             <FormError message={errors.launchDate?.message} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block label-compact font-medium text-slate-700">
               電話番号
             </label>
             <input
               type="tel"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 field-compact shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-3 sm:py-2 sm:text-base"
               placeholder="例: 03-1234-5678"
               {...register('contactPhone')}
             />
             <FormError message={errors.contactPhone?.message} />
         </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">所在地</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-slate-700">所在地</label>
+              <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={notApplicableFields.has('location')}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setNotApplicableFields((prev) => new Set(prev).add('location'));
+                      setValue('location', '', { shouldDirty: true });
+                    } else {
+                      setNotApplicableFields((prev) => {
+                        const next = new Set(prev);
+                        next.delete('location');
+                        return next;
+                      });
+                    }
+                  }}
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+                />
+                <span>該当なし</span>
+              </label>
+            </div>
             <input
               type="text"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
               placeholder="例: 東京都渋谷区..."
+              disabled={notApplicableFields.has('location')}
               {...register('location')}
             />
           </div>
@@ -517,7 +566,7 @@ export const BasicInfoStep = () => {
         id="project-overview"
         number={2}
         title="プロジェクト概要（詳細）"
-        description="ウェブサイト制作の目的とターゲットをより詳しくお聞かせください。"
+        description="ウェブサイト制作の目的とターゲットをより詳しくお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('project-overview')}
         onToggle={() => toggleSection('project-overview')}
         isRequired={true}
@@ -525,10 +574,10 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
           <div>
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block label-compact font-medium text-slate-700">
             ウェブサイト制作の目的（複数選択可）
           </label>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <div className="mt-2 grid gap-ultra sm:gap-2 sm:grid-cols-2">
             {PROJECT_PURPOSE_OPTIONS.map((purpose) => {
               const selectedPurposes = watch('projectPurpose') ?? [];
               const active = selectedPurposes.includes(purpose);
@@ -544,7 +593,7 @@ export const BasicInfoStep = () => {
                     setValue('projectPurpose', next, { shouldDirty: true, shouldValidate: true });
                   }}
                 className={clsx(
-                    'rounded-lg border px-4 py-2 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    'rounded-lg border px-3 py-1.5 text-left text-[13px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 min-h-[40px]',
                   active
                     ? 'border-blue-500 bg-blue-50 text-blue-700'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
@@ -565,11 +614,34 @@ export const BasicInfoStep = () => {
           )}
           </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">ページ構成についてのご要望</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">ページ構成についてのご要望</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('pageStructureRequest')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('pageStructureRequest'));
+                    setValue('pageStructureRequest', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('pageStructureRequest');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <textarea
             rows={3}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="例：トップ、会社概要、サービス紹介、お問い合わせ等"
+            disabled={notApplicableFields.has('pageStructureRequest')}
             {...register('pageStructureRequest')}
           />
         </div>
@@ -618,11 +690,34 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">ターゲットユーザーの特徴・属性</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">ターゲットユーザーの特徴・属性</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('targetCharacteristics')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('targetCharacteristics'));
+                    setValue('targetCharacteristics', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('targetCharacteristics');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <textarea
             rows={3}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="職業、年収、興味関心、行動特性など"
+            disabled={notApplicableFields.has('targetCharacteristics')}
             {...register('targetCharacteristics')}
           />
         </div>
@@ -634,7 +729,7 @@ export const BasicInfoStep = () => {
         id="brand"
         number={3}
         title="ブランドイメージ・ポジショニング"
-        description="御社のブランドについてお聞かせください。"
+        description="御社のブランドについてお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('brand')}
         onToggle={() => toggleSection('brand')}
         isRequired={true}
@@ -725,7 +820,7 @@ export const BasicInfoStep = () => {
         id="competitor"
         number={4}
         title="競合分析・差別化戦略"
-        description="競合他社との比較と、御社の強みを整理しましょう。"
+        description="競合他社との比較と、御社の強みを整理しましょう。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('competitor')}
         onToggle={() => toggleSection('competitor')}
         isRequired={true}
@@ -763,11 +858,34 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">具体的な競合サイトのURLや詳細</label>
-            <textarea
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">具体的な競合サイトのURLや詳細</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('competitorGoodDetails')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('competitorGoodDetails'));
+                    setValue('competitorGoodDetails', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('competitorGoodDetails');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
+          <textarea
             rows={2}
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="競合サイトのURLや詳細があれば記入してください"
+            disabled={notApplicableFields.has('competitorGoodDetails')}
             {...register('competitorGoodDetails')}
           />
         </div>
@@ -802,14 +920,37 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">改善点の詳細</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">改善点の詳細</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('competitorImproveDetails')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('competitorImproveDetails'));
+                    setValue('competitorImproveDetails', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('competitorImproveDetails');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <textarea
             rows={2}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="改善点の詳細について記入してください"
+            disabled={notApplicableFields.has('competitorImproveDetails')}
             {...register('competitorImproveDetails')}
           />
-          </div>
+        </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
             競合他社のサービスと比べて、御社のサービスの違いや強みは何ですか？（複数選択可）
@@ -843,14 +984,37 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">御社の強みについて詳しく教えてください</label>
-            <textarea
-            rows={3}
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            placeholder="強みについて詳しく記入してください"
-            {...register('companyStrengthsDetails')}
-            />
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">御社の強みについて詳しく教えてください</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('companyStrengthsDetails')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('companyStrengthsDetails'));
+                    setValue('companyStrengthsDetails', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('companyStrengthsDetails');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
           </div>
+          <textarea
+            rows={3}
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
+            placeholder="強みについて詳しく記入してください"
+            disabled={notApplicableFields.has('companyStrengthsDetails')}
+            {...register('companyStrengthsDetails')}
+          />
+        </div>
         </div>
       </AccordionSection>
 
@@ -859,7 +1023,7 @@ export const BasicInfoStep = () => {
         id="budget"
         number={5}
         title="予算・スケジュール（詳細）"
-        description="予算と納期について詳しくお聞かせください。"
+        description="予算と納期について詳しくお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('budget')}
         onToggle={() => toggleSection('budget')}
         isRequired={true}
@@ -898,20 +1062,66 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">予算に関する補足事項</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">予算に関する補足事項</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('budgetNote')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('budgetNote'));
+                    setValue('budgetNote', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('budgetNote');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <textarea
             rows={2}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="例：分割払い希望、段階的な制作等"
+            disabled={notApplicableFields.has('budgetNote')}
             {...register('budgetNote')}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">具体的な希望日</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">具体的な希望日</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('deadlineSpecific')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('deadlineSpecific'));
+                    setValue('deadlineSpecific', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('deadlineSpecific');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <input
             type="text"
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="具体的な希望日がある場合はご記入ください"
+            disabled={notApplicableFields.has('deadlineSpecific')}
             {...register('deadlineSpecific')}
           />
         </div>
@@ -923,7 +1133,7 @@ export const BasicInfoStep = () => {
         id="current-site"
         number={6}
         title="現在のウェブサイト状況"
-        description="既存サイトがある場合、現状をお聞かせください。"
+        description="既存サイトがある場合、現状をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('current-site')}
         onToggle={() => toggleSection('current-site')}
         isRequired={true}
@@ -999,11 +1209,34 @@ export const BasicInfoStep = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700">その他の問題点</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-slate-700">その他の問題点</label>
+                <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={notApplicableFields.has('currentSiteIssuesOther')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setNotApplicableFields((prev) => new Set(prev).add('currentSiteIssuesOther'));
+                        setValue('currentSiteIssuesOther', '', { shouldDirty: true });
+                      } else {
+                        setNotApplicableFields((prev) => {
+                          const next = new Set(prev);
+                          next.delete('currentSiteIssuesOther');
+                          return next;
+                        });
+                      }
+                    }}
+                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+                  />
+                  <span>該当なし</span>
+                </label>
+              </div>
               <textarea
                 rows={2}
-                className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
                 placeholder="その他の問題点があれば具体的にご記入ください"
+                disabled={notApplicableFields.has('currentSiteIssuesOther')}
                 {...register('currentSiteIssuesOther')}
               />
             </div>
@@ -1031,7 +1264,7 @@ export const BasicInfoStep = () => {
         id="design"
         number={7}
         title="デザイン要望・参考サイト"
-        description="参考にしたいサイトや、避けたいデザインをお聞かせください。"
+        description="参考にしたいサイトや、避けたいデザインをお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('design')}
         onToggle={() => toggleSection('design')}
         isRequired={true}
@@ -1039,23 +1272,69 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700">参考サイトについて</label>
-          <p className="mt-1 text-xs text-slate-500">
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">参考サイトについて</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('referenceSiteReason')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('referenceSiteReason'));
+                    setValue('referenceSiteReason', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('referenceSiteReason');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
+          <p className="mb-2 text-xs text-slate-500">
             デザインテイスト、レイアウト、機能面で「こんな感じにしたい」と思うサイトがあれば教えてください。
           </p>
           <textarea
             rows={2}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="参考サイトのURLとその理由（「このデザインが好き」「この機能を入れたい」など）をご記入ください"
+            disabled={notApplicableFields.has('referenceSiteReason')}
             {...register('referenceSiteReason')}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">避けたいサイトデザイン</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">避けたいサイトデザイン</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('avoidSiteReason')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('avoidSiteReason'));
+                    setValue('avoidSiteReason', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('avoidSiteReason');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <textarea
             rows={2}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="「こんなデザインは避けたい」というサイトがあれば、URLとその理由を教えてください"
+            disabled={notApplicableFields.has('avoidSiteReason')}
             {...register('avoidSiteReason')}
           />
         </div>
@@ -1074,11 +1353,34 @@ export const BasicInfoStep = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">具体的な色指定</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">具体的な色指定</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('mainColorOther')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('mainColorOther'));
+                    setValue('mainColorOther', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('mainColorOther');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <input
             type="text"
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="例：コーポレートカラー"
+            disabled={notApplicableFields.has('mainColorOther')}
             {...register('mainColorOther')}
           />
         </div>
@@ -1130,11 +1432,34 @@ export const BasicInfoStep = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">お持ちの素材について詳しく教えてください</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">お持ちの素材について詳しく教えてください</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('photoMaterialsDetails')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('photoMaterialsDetails'));
+                    setValue('photoMaterialsDetails', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('photoMaterialsDetails');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
           <textarea
             rows={2}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             placeholder="形式、数量、撮影時期など"
+            disabled={notApplicableFields.has('photoMaterialsDetails')}
             {...register('photoMaterialsDetails')}
           />
         </div>
@@ -1162,7 +1487,7 @@ export const BasicInfoStep = () => {
         id="features"
         number={8}
         title="機能要件"
-        description="必要な機能やCMSの希望をお聞かせください。"
+        description="必要な機能やCMSの希望をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('features')}
         onToggle={() => toggleSection('features')}
         isRequired={true}
@@ -1277,7 +1602,7 @@ export const BasicInfoStep = () => {
         id="seo"
         number={9}
         title="SEO・マーケティング要件"
-        description="SEOとは？Search Engine Optimization（検索エンジン最適化）の略で、GoogleやYahooなどの検索結果で上位に表示されやすくする対策のことです。"
+        description="SEOとは？Search Engine Optimization（検索エンジン最適化）の略で、GoogleやYahooなどの検索結果で上位に表示されやすくする対策のことです。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('seo')}
         onToggle={() => toggleSection('seo')}
         isRequired={true}
@@ -1387,7 +1712,7 @@ export const BasicInfoStep = () => {
         id="tech"
         number={10}
         title="技術・インフラ要件"
-        description="ドメインやサーバーなどの技術的な要件をお聞かせください。"
+        description="ドメインやサーバーなどの技術的な要件をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('tech')}
         onToggle={() => toggleSection('tech')}
         isRequired={true}
@@ -1491,7 +1816,7 @@ export const BasicInfoStep = () => {
         id="maintenance"
         number={11}
         title="保守・運用について"
-        description="ウェブサイト公開後の継続的なサポートに関するご希望をお聞かせください。"
+        description="ウェブサイト公開後の継続的なサポートに関するご希望をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('maintenance')}
         onToggle={() => toggleSection('maintenance')}
         isRequired={true}
@@ -1551,7 +1876,7 @@ export const BasicInfoStep = () => {
         id="project-management"
         number={12}
         title="プロジェクト進行・その他"
-        description="プロジェクトの進行についてお聞かせください。"
+        description="プロジェクトの進行についてお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('project-management')}
         onToggle={() => toggleSection('project-management')}
         isRequired={true}

@@ -1,7 +1,7 @@
 import type { Handler } from '@netlify/functions';
 import nodemailer from 'nodemailer';
 import React from 'react';
-import { renderToBuffer } from '@react-pdf/renderer';
+import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer';
 
 import { HearingPdfDocument } from '../../src/components/pdf/HearingPdf';
 import type { EstimateFormValues } from '../../src/types/estimate';
@@ -53,7 +53,7 @@ export const handler: Handler = async (event, context) => {
     }
 
     // PDFを生成
-    const pdfDoc = React.createElement(HearingPdfDocument, { values: body.values });
+    const pdfDoc = React.createElement(HearingPdfDocument, { values: body.values }) as React.ReactElement<DocumentProps>;
     const pdfBuffer = await renderToBuffer(pdfDoc);
 
     // メール送信の設定
@@ -118,4 +118,3 @@ export const handler: Handler = async (event, context) => {
     };
   }
 };
-

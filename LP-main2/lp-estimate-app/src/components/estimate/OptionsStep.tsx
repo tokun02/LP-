@@ -118,11 +118,11 @@ export const OptionsStep = () => {
 
   return (
     <div className="space-y-10">
-      <section className="space-y-6">
-        <header className="flex items-start justify-between">
+      <section className="space-y-4 sm:space-y-6">
+        <header className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">追加オプションを選択</h3>
-            <p className="text-sm text-slate-500">
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900">追加オプションを選択</h3>
+            <p className="text-xs sm:text-sm text-slate-500">
               機能追加やマーケティング支援など、案件に必要なオプションを選択してください。
             </p>
           </div>
@@ -130,7 +130,7 @@ export const OptionsStep = () => {
           <button
             type="button"
             onClick={handleResetOptions}
-            className="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/40"
+            className="btn btn-outline btn-sm btn-reset-red"
           >
             <svg
               className="h-4 w-4"
@@ -151,9 +151,9 @@ export const OptionsStep = () => {
 
         {/* サジェスト: 個別3つがすべて選択されている場合、パックへの切替を提案 */}
         {allIndividualsSelected && !packSelected && (
-          <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
-            <div className="flex items-center justify-between gap-3">
-              <p>
+          <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 sm:p-4 text-xs sm:text-sm text-amber-800">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
+              <p className="flex-1">
                 GA4・Search Console設定 / SNS連携 がすべて選択されています。{' '}
                 <span className="font-semibold">マーケ支援パック（10%割引）</span>への切替をおすすめします。
               </p>
@@ -166,7 +166,7 @@ export const OptionsStep = () => {
                     shouldValidate: true,
                   });
                 }}
-                className="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-amber-700"
+                className="btn btn-primary btn-sm btn-amber w-full sm:w-auto"
               >
                 パックに切替
               </button>
@@ -174,11 +174,11 @@ export const OptionsStep = () => {
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="stack-compact sm:space-y-6">
           {Object.entries(groupedOptions).map(([category, items]) => (
-            <div key={category} className="space-y-3">
-              <h4 className="text-sm font-semibold text-slate-700">{CATEGORY_LABELS[category] ?? category}</h4>
-              <div className="grid gap-3 lg:grid-cols-2">
+            <div key={category} className="space-y-1.5 sm:space-y-3">
+              <h4 className="text-xs sm:text-sm font-semibold text-slate-700">{CATEGORY_LABELS[category] ?? category}</h4>
+              <div className="grid gap-ultra sm:gap-3 lg:grid-cols-2">
                 {items.map((option) => {
                   const active = selectedOptions.includes(option.code);
                   const isIncluded = includedOptions.includes(option.code);
@@ -189,7 +189,7 @@ export const OptionsStep = () => {
                       type="button"
                       onClick={() => (disabled ? undefined : toggleOption(option.code))}
                       className={clsx(
-                        'rounded-xl border px-4 py-3 text-left text-sm shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                        'rounded-lg sm:rounded-xl border card-ultra text-left text-xs shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 min-h-[44px] sm:px-4 sm:py-3 sm:text-sm',
                         isIncluded
                           ? 'cursor-default border-emerald-300 bg-emerald-50 text-emerald-700'
                           : disabled
@@ -199,10 +199,10 @@ export const OptionsStep = () => {
                           : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
                       )}
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <div className="font-semibold">{option.name}</div>
-                          <p className="mt-1 text-xs text-slate-500">{option.description}</p>
+                      <div className="flex items-start justify-between gap-1.5 sm:gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="title-compact sm:text-sm font-semibold">{option.name}</div>
+                          <p className="mt-0.5 hint-compact sm:text-xs text-slate-500 leading-relaxed break-words">{option.description}</p>
                         </div>
                         {isIncluded ? (
                           <span className="ml-2 shrink-0 text-xs font-semibold text-emerald-600">
@@ -253,12 +253,12 @@ export const OptionsStep = () => {
         <FormError message={errors.selectedOptions?.message} />
       </section>
 
-  <section className="space-y-4">
+  <section className="space-y-3 sm:space-y-4">
         <header>
-          <h3 className="text-lg font-semibold text-slate-900">出力形式</h3>
-          <p className="text-sm text-slate-500">見積の出力形式を設定します。</p>
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">出力形式</h3>
+          <p className="text-xs sm:text-sm text-slate-500">見積の出力形式を設定します。</p>
         </header>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4 text-xs sm:text-sm text-slate-600">
           <p className="font-medium text-slate-700">税込表示</p>
           <p className="mt-1 text-xs text-slate-500">
             税込表示をONにすると、10%の消費税を加算した金額でサマリを表示します。
