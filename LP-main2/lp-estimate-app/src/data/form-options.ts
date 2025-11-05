@@ -336,35 +336,130 @@ export type WireframeTemplate = {
   previewUrl?: string; // 将来的に制作したURLを表示するためのフィールド
 };
 
+// テンプレート用のワイヤーフレーム案
 export const WIREFRAME_TEMPLATES: WireframeTemplate[] = [
   {
     id: 'template-standard-1',
-    name: 'テンプレート1（標準-ベーシック）',
+    name: 'テンプレート1',
     description: 'シンプルでわかりやすいレイアウト。小規模な企業サイトやサービス紹介サイトに最適。',
     useCase: ['小規模な企業サイト', 'サービス紹介', 'シンプルなLP'],
     priceModifier: 1.0,
     estimatedTime: '2-3週間',
-    previewUrl: '/wireframe-demo/standard',
+    previewUrl: '/wireframe-demo/template-1',
   },
   {
     id: 'template-standard-2',
-    name: 'テンプレート2（標準-スタンダード）',
+    name: 'テンプレート2',
     description: 'バランスの取れた標準的なレイアウト。一般的な企業サイトや採用サイトに最適。',
     useCase: ['標準的な企業サイト', '採用サイト', 'サービス紹介'],
     priceModifier: 1.0,
     estimatedTime: '2-3週間',
-    previewUrl: '/wireframe-demo/standard',
+    previewUrl: '/wireframe-demo/template-2',
   },
   {
     id: 'template-standard-3',
-    name: 'テンプレート3（標準-プレミアム）',
+    name: 'テンプレート3',
     description: '充実したセクション構成。情報量の多いサイトやブランド訴求を重視するサイト向け。',
     useCase: ['情報量の多いサイト', 'ブランド訴求重視', 'メディアサイト'],
     priceModifier: 1.0,
     estimatedTime: '2-3週間',
-    previewUrl: '/wireframe-demo/standard',
+    previewUrl: '/wireframe-demo/template-3',
   },
 ];
+
+// セミオーダー用のワイヤーフレーム案
+export const WIREFRAME_SEMI_CUSTOM: WireframeTemplate[] = [
+  {
+    id: 'semi-custom-1',
+    name: 'セミオーダー1',
+    description: 'シンプルなテンプレートをベースに、ご要望に合わせてレイアウトを調整します。',
+    useCase: ['小規模カスタマイズ', 'コスト重視', '短期間'],
+    priceModifier: 1.2,
+    estimatedTime: '3-4週間',
+    previewUrl: '/wireframe-demo/semi-custom-1',
+  },
+  {
+    id: 'semi-custom-2',
+    name: 'セミオーダー2',
+    description: '標準的なテンプレートをベースに、セクション構成や機能をカスタマイズします。',
+    useCase: ['中規模カスタマイズ', '機能追加', 'ブランド調整'],
+    priceModifier: 1.3,
+    estimatedTime: '4-5週間',
+    previewUrl: '/wireframe-demo/semi-custom-2',
+  },
+  {
+    id: 'semi-custom-3',
+    name: 'セミオーダー3',
+    description: '充実したテンプレートをベースに、デザインや機能を大幅にカスタマイズします。',
+    useCase: ['大規模カスタマイズ', 'ブランド訴求重視', '差別化重視'],
+    priceModifier: 1.5,
+    estimatedTime: '5-6週間',
+    previewUrl: '/wireframe-demo/semi-custom-3',
+  },
+  {
+    id: 'semi-custom-4',
+    name: 'セミオーダー4',
+    description: '複数のテンプレートの良い部分を組み合わせて、最適な構成を設計します。',
+    useCase: ['複合要件', '多機能サイト', '柔軟性重視'],
+    priceModifier: 1.4,
+    estimatedTime: '4-6週間',
+    previewUrl: '/wireframe-demo/semi-custom-4',
+  },
+];
+
+// フルオーダー用のワイヤーフレーム案
+export const WIREFRAME_FULL_CUSTOM: WireframeTemplate[] = [
+  {
+    id: 'full-custom-1',
+    name: 'フルオーダー1',
+    description: '完全オリジナルのワイヤーフレームから設計。シンプルで効率的な構成を重視します。',
+    useCase: ['完全オリジナル', 'シンプル設計', '効率重視'],
+    priceModifier: 1.8,
+    estimatedTime: '6-8週間',
+    previewUrl: '/wireframe-demo/full-custom-1',
+  },
+  {
+    id: 'full-custom-2',
+    name: 'フルオーダー2',
+    description: '完全オリジナルのワイヤーフレームから設計。標準的な機能とレイアウトを組み合わせます。',
+    useCase: ['完全オリジナル', '標準機能', 'バランス重視'],
+    priceModifier: 2.0,
+    estimatedTime: '8-10週間',
+    previewUrl: '/wireframe-demo/full-custom-2',
+  },
+  {
+    id: 'full-custom-3',
+    name: 'フルオーダー3',
+    description: '完全オリジナルのワイヤーフレームから設計。充実した機能と独自のレイアウトを実現します。',
+    useCase: ['完全オリジナル', '高機能', '差別化重視'],
+    priceModifier: 2.5,
+    estimatedTime: '10-12週間',
+    previewUrl: '/wireframe-demo/full-custom-3',
+  },
+  {
+    id: 'full-custom-4',
+    name: 'フルオーダー4',
+    description: '完全オリジナルのワイヤーフレームから設計。大規模サイトや複雑な要件に対応します。',
+    useCase: ['完全オリジナル', '大規模サイト', '複雑要件'],
+    priceModifier: 3.0,
+    estimatedTime: '12-16週間',
+    previewUrl: '/wireframe-demo/full-custom-4',
+  },
+];
+
+// ワイヤーフレームタイプ別のテンプレート一覧を取得
+export const getWireframeTemplatesByType = (type: WireframeType): WireframeTemplate[] => {
+  switch (type) {
+    case 'template':
+      return WIREFRAME_TEMPLATES;
+    case 'semi-custom':
+      return WIREFRAME_SEMI_CUSTOM;
+    case 'full-custom':
+      return WIREFRAME_FULL_CUSTOM;
+    default:
+      return [];
+  }
+};
 
 export const WIREFRAME_OPTIONS = [
   'template',

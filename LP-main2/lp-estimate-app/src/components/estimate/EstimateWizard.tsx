@@ -178,8 +178,13 @@ export const EstimateWizard = () => {
   const watchedValues = formMethods.watch();
 
   // 必須項目のバリデーション（BasicInfoStepの場合）
+  // 開発環境では必須項目チェックを無効化
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const isBasicInfoValid = useMemo(() => {
     if (currentStep !== 'basic') return true; // basic以外は常に有効
+    
+    // 開発環境では必須項目チェックをスキップ
+    if (isDevelopment) return true;
     
     // 必須セクションのチェック
     const requiredSections = [
@@ -294,7 +299,7 @@ export const EstimateWizard = () => {
     
     // すべての必須セクションが完了しているかチェック
     return requiredSections.every((section) => section.check(watchedValues as EstimateFormValues));
-  }, [currentStep, watchedValues]);
+  }, [currentStep, watchedValues, isDevelopment]);
 
   const handleReset = () => {
     reset();

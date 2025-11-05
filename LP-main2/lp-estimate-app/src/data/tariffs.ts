@@ -82,7 +82,7 @@ export const basePackages: BasePackage[] = [
     code: 'recruitment',
     name: '採用サイト',
     description: 'カルチャー訴求と募集要項整備を重視した採用特化サイト向け。',
-    basePrice: 160000,
+    basePrice: 90000,
     recommendedFor: '募集要項／社員紹介／カルチャー発信／エントリーフォーム',
     includedPages: 5,
     additionalPageUnitPrice: 22000,
