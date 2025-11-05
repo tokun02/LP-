@@ -13,7 +13,6 @@ import {
   PROJECT_PURPOSE_OPTIONS,
   SITE_TYPE_OPTIONS,
   PAGE_RANGE_OPTIONS,
-  BRAND_IMAGE_OPTIONS,
   BRAND_VALUES_OPTIONS,
   BRAND_GOALS_OPTIONS,
   COMPETITOR_GOOD_OPTIONS,
@@ -43,6 +42,9 @@ import {
   WIREFRAME_OPTIONS,
 } from '@/data/form-options';
 
+// 開発環境では必須項目チェックを無効化
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 const SITE_PURPOSE_VALUES_LOCAL = basePackages.map((pkg) => pkg.name as SitePurpose);
 const sitePurposeEnum = z.enum(SITE_PURPOSE_VALUES_LOCAL as [SitePurpose, ...SitePurpose[]]);
 const budgetEnum = z.enum([...BUDGET_RANGE_OPTIONS] as unknown as [BudgetRange, ...BudgetRange[]]);
@@ -65,10 +67,16 @@ export const estimateSchema = z.object({
     .max(60, { message: 'クライアント名は60文字以内です。' })
     .optional()
     .or(z.literal('')),
-  contactEmail: z
-    .string()
-    .min(1, { message: 'メールアドレスは必須です。' })
-    .email({ message: 'メールアドレスの形式が正しくありません。' }),
+  contactEmail: isDevelopment
+    ? z
+        .string()
+        .email({ message: 'メールアドレスの形式が正しくありません。' })
+        .optional()
+        .or(z.literal(''))
+    : z
+        .string()
+        .min(1, { message: 'メールアドレスは必須です。' })
+        .email({ message: 'メールアドレスの形式が正しくありません。' }),
   sitePurpose: z
     .array(sitePurposeEnum, { message: '目的を選択してください。' })
     .max(4, { message: '目的は最大4つまでです。' })
@@ -114,6 +122,7 @@ export const estimateSchema = z.object({
     .min(0, { message: '0以上を入力してください。' })
     .max(6, { message: '最大6言語まで対応可能です。' }),
   wireframeType: z.enum(WIREFRAME_OPTIONS as unknown as [string, ...string[]]).optional(),
+  wireframeTemplateId: z.string().optional(), // 選択されたワイヤーフレームテンプレートのID
   homepageBasePrice: z
     .number({ message: 'ホームページの料金は数値で入力してください。' })
     .min(0, { message: '0以上を入力してください。' })
@@ -196,7 +205,11 @@ export const estimateSchema = z.object({
     .optional(),
 
   // ここから追加の選択群（すべて任意）
-  industry: z.enum(INDUSTRY_OPTIONS as unknown as [string, ...string[]]).optional(),
+  industry: isDevelopment
+    ? z.enum(INDUSTRY_OPTIONS as unknown as [string, ...string[]]).optional()
+    : z.enum(INDUSTRY_OPTIONS as unknown as [string, ...string[]], {
+        required_error: '業種・業態を選択してください。',
+      }),
   employeeSize: z.enum(EMPLOYEE_SIZE_OPTIONS as unknown as [string, ...string[]]).optional(),
   projectPurposes: z
     .array(z.enum(PROJECT_PURPOSE_OPTIONS as unknown as [string, ...string[]]))
@@ -204,7 +217,6 @@ export const estimateSchema = z.object({
     .optional(),
   siteType: z.enum(SITE_TYPE_OPTIONS as unknown as [string, ...string[]]).default('ランディングページ'),
   pageRange: z.enum(PAGE_RANGE_OPTIONS as unknown as [string, ...string[]]).optional(),
-  brandImage: z.enum(BRAND_IMAGE_OPTIONS as unknown as [string, ...string[]]).optional(),
   brandValues: z
     .array(z.enum(BRAND_VALUES_OPTIONS as unknown as [string, ...string[]]))
     .max(BRAND_VALUES_OPTIONS.length)
@@ -281,8 +293,12 @@ export const estimateSchema = z.object({
   projectPurpose: z.array(z.string()).optional(),
   projectPurposeOther: z.string().optional(),
   pageStructureRequest: z.string().optional(),
-  targetGender: z.string().optional(),
-  targetAgeGroups: z.array(z.string()).optional(),
+  targetGender: isDevelopment
+    ? z.string().optional()
+    : z.string().min(1, { message: 'メインターゲットの性別を選択してください。' }),
+  targetAgeGroups: isDevelopment
+    ? z.array(z.string()).optional()
+    : z.array(z.string()).min(1, { message: 'メインターゲットの年齢層を1つ以上選択してください。' }),
   targetCharacteristics: z.string().optional(),
   competitorUrl: z.string().url().optional().or(z.literal('')),
   competitorGoodPoints: z.array(z.string()).optional(),
@@ -298,7 +314,7 @@ export const estimateSchema = z.object({
   deadline: z.string().optional(),
   deadlineSpecific: z.string().optional(),
   existingSite: z.string().optional(),
-  existingSiteUrl: z.string().url().optional().or(z.literal('')),
+  existingSiteUrl: z.string().optional().or(z.literal('')),
   currentSiteIssues: z.array(z.string()).optional(),
   currentSiteIssuesOther: z.string().optional(),
   monthlyVisitCount: z.string().optional(),
@@ -315,6 +331,7 @@ export const estimateSchema = z.object({
   targetKeywords: z.string().optional(),
   snsIntegration: z.array(z.string()).optional(),
   domainExisting: z.string().optional(),
+  domainDesired: z.string().optional(),
   devicesSupported: z.array(z.string()).optional(),
   maintenanceContract: z.string().optional(),
   approvalFlowDetails: z.string().optional(),
@@ -323,7 +340,26 @@ export const estimateSchema = z.object({
   priorities: z.array(z.string()).optional(),
   otherRequests: z.string().optional(),
   feedback: z.string().optional(),
-});
+})
+  .superRefine((data, ctx) => {
+    // 既存サイトがある場合、URLと問題点を必須にする
+    if (data.existingSite === 'あり') {
+      if (!data.existingSiteUrl || data.existingSiteUrl === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '既存サイトのURLを入力してください。',
+          path: ['existingSiteUrl'],
+        });
+      }
+      if (!data.currentSiteIssues || data.currentSiteIssues.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '現在のサイトの問題点を1つ以上選択してください。',
+          path: ['currentSiteIssues'],
+        });
+      }
+    }
+  });
 
 export type EstimateSchema = typeof estimateSchema;
 

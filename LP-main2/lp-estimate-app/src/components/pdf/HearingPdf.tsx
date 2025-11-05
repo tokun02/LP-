@@ -92,9 +92,12 @@ export const HearingPdfDocument = ({ values, generatedAt = new Date() }: Hearing
       <Page size="A4" style={styles.page}>
         {/* ヘッダー */}
         <View style={styles.header}>
-          <Text style={styles.heading}>ウェブサイト制作 ヒアリングシート</Text>
+          <Text style={styles.heading}>ウェブサイト制作 ヒアリングシート（参考資料）</Text>
           <Text style={styles.subtitle}>作成日: {generatedAt.toLocaleDateString('ja-JP')}</Text>
           <Text style={styles.subtitle}>エンジニア向け資料（内部共有用）</Text>
+          <Text style={[styles.subtitle, { fontSize: 9, color: '#94a3b8', marginTop: 4 }]}>
+            ※ 本ヒアリングシートは参考資料です。確定見積もりはヒアリングをした後日にご提示いたします。
+          </Text>
         </View>
 
         {/* 1. 基本情報 */}

@@ -135,6 +135,36 @@ export const EstimateWizard = () => {
     return () => subscription.unsubscribe();
   }, [formMethods, updateValues]);
 
+  // ステップ変更時に見積シミュレーターのヘッダー位置までスクロール
+  useEffect(() => {
+    // 少し遅延を入れて、DOMが更新された後にスクロール
+    const timer = setTimeout(() => {
+      const estimateSection = document.getElementById('estimate');
+      if (estimateSection) {
+        // ヘッダーの位置を計算（header要素の上端）
+        const header = estimateSection.querySelector('header');
+        if (header) {
+          const headerRect = header.getBoundingClientRect();
+          const scrollPosition = window.scrollY + headerRect.top - 20; // 20pxの余白
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth',
+          });
+        } else {
+          // headerがない場合はセクションの先頭まで
+          const sectionRect = estimateSection.getBoundingClientRect();
+          const scrollPosition = window.scrollY + sectionRect.top - 20;
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth',
+          });
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [currentStep]);
+
   const currentIndex = useMemo(
     () => Math.max(0, steps.findIndex((step) => step.id === currentStep)),
     [currentStep],
@@ -148,16 +178,21 @@ export const EstimateWizard = () => {
   const watchedValues = formMethods.watch();
 
   // 必須項目のバリデーション（BasicInfoStepの場合）
+  // 開発環境では必須項目チェックを無効化
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const isBasicInfoValid = useMemo(() => {
     if (currentStep !== 'basic') return true; // basic以外は常に有効
+    
+    // 開発環境では必須項目チェックをスキップ
+    if (isDevelopment) return true;
     
     // 必須セクションのチェック
     const requiredSections = [
       // 1. 基本情報（詳細）
       {
-        fields: ['companyName', 'contactPersonName', 'contactPhone', 'contactEmail'],
+        fields: ['companyName', 'contactPersonName', 'contactPhone', 'contactEmail', 'industry'],
         check: (v: EstimateFormValues) => {
-          return v.companyName && v.contactPersonName && v.contactPhone && v.contactEmail;
+          return v.companyName && v.contactPersonName && v.contactPhone && v.contactEmail && v.industry;
         },
       },
       // 2. プロジェクト概要（詳細）
@@ -169,22 +204,28 @@ export const EstimateWizard = () => {
       },
       // 3. ブランドイメージ・ポジショニング
       {
-        fields: ['brandImage', 'brandValues', 'brandGoals'],
+        fields: ['brandValues', 'brandGoals'],
         check: (v: EstimateFormValues) => {
-          const brandImage = !!v.brandImage;
           const brandValues = Array.isArray(v.brandValues) && v.brandValues.length > 0;
           const brandGoals = Array.isArray(v.brandGoals) && v.brandGoals.length > 0;
-          return brandImage && brandValues && brandGoals;
+          return brandValues && brandGoals;
+        },
+      },
+      // 3-2. ターゲット情報
+      {
+        fields: ['targetGender', 'targetAgeGroups'],
+        check: (v: EstimateFormValues) => {
+          const targetGender = !!v.targetGender;
+          const targetAgeGroups = Array.isArray(v.targetAgeGroups) && v.targetAgeGroups.length > 0;
+          return targetGender && targetAgeGroups;
         },
       },
       // 4. 競合分析・差別化戦略
       {
-        fields: ['competitorGoodPoints', 'competitorImprovePoints', 'companyStrengths'],
+        fields: ['companyStrengths'],
         check: (v: EstimateFormValues) => {
-          const goodPoints = Array.isArray(v.competitorGoodPoints) && v.competitorGoodPoints.length > 0;
-          const improvePoints = Array.isArray(v.competitorImprovePoints) && v.competitorImprovePoints.length > 0;
           const strengths = Array.isArray(v.companyStrengths) && v.companyStrengths.length > 0;
-          return goodPoints && improvePoints && strengths;
+          return strengths;
         },
       },
       // 5. 予算・スケジュール（詳細）
@@ -196,9 +237,12 @@ export const EstimateWizard = () => {
       },
       // 6. 現在のウェブサイト状況
       {
-        fields: ['existingSite'],
+        fields: ['existingSite', 'existingSiteUrl', 'currentSiteIssues'],
         check: (v: EstimateFormValues) => {
-          return !!v.existingSite;
+          if (v.existingSite === 'あり') {
+            return !!v.existingSiteUrl && Array.isArray(v.currentSiteIssues) && v.currentSiteIssues.length > 0;
+          }
+          return true; // 既存サイトがない場合は必須ではない
         },
       },
       // 7. デザイン要望・参考サイト
@@ -223,21 +267,28 @@ export const EstimateWizard = () => {
           return !!v.seoImportance;
         },
       },
-      // 10. 技術・インフラ要件
+      // 6. ウェブサイト・技術要件（統合済み）
       {
-        fields: ['domainChoice', 'serverChoice'],
+        fields: ['existingSite', 'existingSiteUrl', 'currentSiteIssues', 'domainChoice', 'serverChoice'],
         check: (v: EstimateFormValues) => {
+          // 既存サイトがある場合の必須チェック
+          if (v.existingSite === 'あり') {
+            const hasUrl = !!v.existingSiteUrl;
+            const hasIssues = Array.isArray(v.currentSiteIssues) && v.currentSiteIssues.length > 0;
+            if (!hasUrl || !hasIssues) return false;
+          }
+          // ドメインとサーバーの必須チェック
           return !!v.domainChoice && !!v.serverChoice;
         },
       },
-      // 11. 保守・運用について
+      // 10. 保守・運用について
       {
         fields: ['maintenanceContract'],
         check: (v: EstimateFormValues) => {
           return !!v.maintenanceContract;
         },
       },
-      // 12. プロジェクト進行・その他
+      // 11. プロジェクト進行・その他
       {
         fields: ['approvalFlow'],
         check: (v: EstimateFormValues) => {
@@ -248,7 +299,7 @@ export const EstimateWizard = () => {
     
     // すべての必須セクションが完了しているかチェック
     return requiredSections.every((section) => section.check(watchedValues as EstimateFormValues));
-  }, [currentStep, watchedValues]);
+  }, [currentStep, watchedValues, isDevelopment]);
 
   const handleReset = () => {
     reset();
@@ -362,7 +413,7 @@ export const EstimateWizard = () => {
             <div className="space-y-8">
               <SummaryStep breakdown={breakdown} onReset={handleReset} onBack={() => setStep('options')} />
               <div className="lg:hidden">
-                <EstimateSummaryPanel breakdown={breakdown} />
+                <EstimateSummaryPanel breakdown={breakdown} currentStep={currentStep} />
               </div>
             </div>
           ) : (
@@ -376,7 +427,7 @@ export const EstimateWizard = () => {
               <ActiveComponent />
               {currentStep !== 'basic' && (
                 <div className="lg:hidden">
-                  <EstimateSummaryPanel breakdown={breakdown} />
+                  <EstimateSummaryPanel breakdown={breakdown} currentStep={currentStep} />
                 </div>
               )}
               <div className="flex flex-col gap-ultra pt-3 sm:flex-row sm:justify-between sm:gap-3">
@@ -416,7 +467,7 @@ export const EstimateWizard = () => {
         </FormProvider>
         {currentStep !== 'basic' && (
           <div className="hidden lg:block">
-            <EstimateSummaryPanel breakdown={breakdown} />
+            <EstimateSummaryPanel breakdown={breakdown} currentStep={currentStep} />
           </div>
         )}
       </div>

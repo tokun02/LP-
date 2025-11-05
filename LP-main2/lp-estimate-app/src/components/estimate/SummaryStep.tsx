@@ -209,6 +209,9 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
         <header>
           <h3 className="title-compact sm:text-lg font-semibold text-slate-900">ヒアリング内容</h3>
           <p className="lead-compact sm:text-base text-slate-700">入力いただいたヒアリング項目を表示しています。</p>
+          <p className="lead-compact sm:text-sm text-slate-600 mt-2">
+            ※ 本ヒアリングシートは参考資料です。確定見積もりはヒアリングをした後日にご提示いたします。
+          </p>
         </header>
         <div className="rounded-lg sm:rounded-xl border border-blue-200 bg-blue-50 card-ultra sm:p-6 shadow-sm">
           {!hasHearingData ? (
@@ -310,8 +313,11 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
 
       <section className="space-y-3 sm:space-y-4">
         <header>
-          <h3 className="title-compact sm:text-lg font-semibold text-slate-900">内訳</h3>
+          <h3 className="title-compact sm:text-lg font-semibold text-slate-900">参考概算見積内訳</h3>
           <p className="lead-compact sm:text-base text-slate-700 mb-2 sm:mb-4">選択したパッケージとオプションの明細です。</p>
+          <p className="lead-compact sm:text-sm text-slate-600 mb-2 sm:mb-4">
+            ※ 参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
+          </p>
         </header>
         <div className="overflow-hidden rounded-lg sm:rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="overflow-x-auto -mx-4 px-4">
@@ -394,7 +400,11 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
             )}
           </div>
           <p className="hint-compact sm:text-sm text-slate-700 break-words max-w-sm sm:max-w-none">
-            PDFはドラフト版です。PDFダウンロード時にメールでお送りします。
+            PDFは参考概算見積のドラフト版です。PDFダウンロード時にメールでお送りします。
+            <br />
+            <span className="text-xs text-slate-600">
+              ※ 確定見積もりはヒアリングをした後日にご提示いたします。
+            </span>
           </p>
         </div>
         <div className="flex flex-col gap-ultra sm:flex-row sm:justify-end sm:gap-3">

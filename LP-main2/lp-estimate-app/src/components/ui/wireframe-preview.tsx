@@ -2,27 +2,16 @@
 
 type WireframePreviewProps = {
   type: 'standard-1' | 'standard-2' | 'standard-3' | 'semi-custom' | 'full-custom';
+  templateId?: string; // テンプレートID（詳細なワイヤーフレーム表示用）
   previewUrl?: string;
 };
 
 // ワイヤーフレームのレイアウトを視覚的に表現するコンポーネント
-export const WireframePreview = ({ type, previewUrl }: WireframePreviewProps) => {
-  // URLがある場合はiframeで実際のページを表示（開発環境のみ）
-  if (previewUrl && typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return (
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-slate-300 bg-white shadow-inner">
-        <iframe
-          src={previewUrl}
-          className="h-full w-full"
-          title="ワイヤーフレームプレビュー"
-          loading="lazy"
-          style={{ border: 'none' }}
-        />
-      </div>
-    );
-  }
-
+// パフォーマンス最適化: 常にSVGで表示（iframeは使用しない）
+// 詳細はクリック時に新規タブで表示されるため、初期読み込み時の負荷はゼロ
+export const WireframePreview = ({ type, templateId, previewUrl }: WireframePreviewProps) => {
   // SVGでワイヤーフレームのレイアウトを表現
+  // 注: 実際のデモサイトはクリック時に新規タブで開かれるため、ここでは表示しない
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 p-3 shadow-sm">
       <svg
@@ -117,51 +106,149 @@ export const WireframePreview = ({ type, previewUrl }: WireframePreviewProps) =>
 
         {type === 'semi-custom' && (
           <>
-            {/* セミオーダー: テンプレートベース */}
-            <rect x="20" y="20" width="360" height="30" rx="2" fill="#8b5cf6" opacity="0.2" stroke="#8b5cf6" strokeDasharray="4 4" />
-            <text x="30" y="40" fontSize="10" fill="#6d28d9" fontWeight="bold">
-              テンプレートベース
-            </text>
-            <rect x="20" y="60" width="175" height="130" rx="2" fill="#64748b" opacity="0.2" />
-            <text x="30" y="85" fontSize="9" fill="#475569">
-              カスタマイズ
-            </text>
-            <text x="30" y="100" fontSize="9" fill="#475569">
-              可能エリア
-            </text>
-            <rect x="205" y="60" width="175" height="130" rx="2" fill="#94a3b8" opacity="0.2" />
-            <text x="215" y="85" fontSize="9" fill="#64748b">
-              テンプレート
-            </text>
-            <text x="215" y="100" fontSize="9" fill="#64748b">
-              構造
-            </text>
-            <circle cx="370" cy="125" r="8" fill="#8b5cf6" opacity="0.5" />
-            <text x="350" y="130" fontSize="8" fill="#6d28d9">
-              +α
-            </text>
+            {/* セミオーダー: テンプレートIDに応じた異なるデザイン */}
+            {templateId === 'semi-custom-1' && (
+              <>
+                {/* セミオーダー1: シンプルカスタマイズ - 1カラム + カスタムエリア */}
+                <rect x="20" y="15" width="360" height="35" rx="2" fill="#8b5cf6" opacity="0.25" stroke="#8b5cf6" strokeDasharray="3 3" />
+                <text x="30" y="35" fontSize="10" fill="#6d28d9" fontWeight="bold">ヘッダー（カスタマイズ可）</text>
+                <rect x="20" y="55" width="360" height="25" rx="2" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="30" y="72" fontSize="9" fill="#6d28d9">カスタムバナー</text>
+                <rect x="20" y="85" width="360" height="90" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="30" y="105" fontSize="9" fill="#475569">メインコンテンツ（1カラム）</text>
+                <rect x="30" y="115" width="340" height="50" rx="1" fill="#94a3b8" opacity="0.15" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="40" y="135" fontSize="8" fill="#6d28d9">カスタマイズエリア</text>
+                <rect x="20" y="180" width="360" height="30" rx="2" fill="#94a3b8" opacity="0.25" />
+                <text x="30" y="198" fontSize="9" fill="#64748b">フッター</text>
+              </>
+            )}
+            {templateId === 'semi-custom-2' && (
+              <>
+                {/* セミオーダー2: スタンダードカスタマイズ - 2カラム + カスタムウィジェット */}
+                <rect x="20" y="15" width="360" height="40" rx="2" fill="#8b5cf6" opacity="0.25" stroke="#8b5cf6" strokeDasharray="3 3" />
+                <text x="30" y="38" fontSize="10" fill="#6d28d9" fontWeight="bold">ヘッダー・ナビ（カスタマイズ）</text>
+                <rect x="20" y="60" width="240" height="100" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="30" y="80" fontSize="9" fill="#475569">メインコンテンツ</text>
+                <rect x="30" y="90" width="220" height="60" rx="1" fill="#8b5cf6" opacity="0.1" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="40" y="110" fontSize="8" fill="#6d28d9">カスタムセクション</text>
+                <rect x="270" y="60" width="110" height="100" rx="2" fill="#94a3b8" opacity="0.2" />
+                <text x="280" y="80" fontSize="9" fill="#64748b">サイドバー</text>
+                <rect x="280" y="90" width="90" height="25" rx="1" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="285" y="107" fontSize="8" fill="#6d28d9">カスタムウィジェット</text>
+                <rect x="20" y="165" width="360" height="35" rx="2" fill="#94a3b8" opacity="0.25" />
+                <text x="30" y="185" fontSize="9" fill="#64748b">フッター</text>
+              </>
+            )}
+            {templateId === 'semi-custom-3' && (
+              <>
+                {/* セミオーダー3: プレミアムカスタマイズ - マルチセクション + 高度なカスタマイズ */}
+                <rect x="20" y="10" width="360" height="45" rx="2" fill="#8b5cf6" opacity="0.25" stroke="#8b5cf6" strokeDasharray="3 3" />
+                <text x="30" y="32" fontSize="10" fill="#6d28d9" fontWeight="bold">ヘッダー・グローバルナビ（カスタマイズ）</text>
+                <rect x="20" y="60" width="360" height="35" rx="2" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="30" y="82" fontSize="9" fill="#6d28d9">カスタムヒーローセクション</text>
+                <rect x="20" y="100" width="175" height="70" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="30" y="120" fontSize="9" fill="#475569">セクション1</text>
+                <rect x="30" y="130" width="155" height="30" rx="1" fill="#8b5cf6" opacity="0.1" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="40" y="150" fontSize="8" fill="#6d28d9">カスタム要素</text>
+                <rect x="205" y="100" width="175" height="70" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="215" y="120" fontSize="9" fill="#475569">セクション2</text>
+                <rect x="215" y="130" width="155" height="30" rx="1" fill="#8b5cf6" opacity="0.1" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="225" y="150" fontSize="8" fill="#6d28d9">カスタム要素</text>
+                <rect x="20" y="175" width="360" height="35" rx="2" fill="#94a3b8" opacity="0.25" />
+                <text x="30" y="195" fontSize="9" fill="#64748b">フッター（カスタマイズ可）</text>
+              </>
+            )}
+            {(!templateId || templateId === 'semi-custom-4') && (
+              <>
+                {/* セミオーダー4: ハイブリッド - 複合レイアウト */}
+                <rect x="20" y="15" width="360" height="35" rx="2" fill="#8b5cf6" opacity="0.25" stroke="#8b5cf6" strokeDasharray="3 3" />
+                <text x="30" y="35" fontSize="10" fill="#6d28d9" fontWeight="bold">ハイブリッドヘッダー</text>
+                <rect x="20" y="55" width="360" height="30" rx="2" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" strokeDasharray="2 2" />
+                <text x="30" y="75" fontSize="9" fill="#6d28d9">複合バナー</text>
+                <rect x="20" y="90" width="110" height="80" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="30" y="110" fontSize="8" fill="#475569">エリアA</text>
+                <rect x="140" y="90" width="120" height="80" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="150" y="110" fontSize="8" fill="#475569">エリアB</text>
+                <rect x="270" y="90" width="110" height="80" rx="2" fill="#64748b" opacity="0.2" />
+                <text x="280" y="110" fontSize="8" fill="#475569">エリアC</text>
+                <rect x="20" y="175" width="360" height="30" rx="2" fill="#94a3b8" opacity="0.25" />
+                <text x="30" y="193" fontSize="9" fill="#64748b">フッター</text>
+              </>
+            )}
           </>
         )}
 
         {type === 'full-custom' && (
           <>
-            {/* フルオーダー: 完全オリジナル */}
-            <rect x="20" y="20" width="360" height="185" rx="2" fill="#ec4899" opacity="0.1" stroke="#ec4899" strokeDasharray="6 6" strokeWidth="2" />
-            <text x="180" y="50" fontSize="12" fill="#db2777" fontWeight="bold">
-              完全オリジナル
-            </text>
-            <text x="150" y="80" fontSize="10" fill="#be185d">
-              お客様のご要望に合わせて
-            </text>
-            <text x="140" y="100" fontSize="10" fill="#be185d">
-              ワイヤーフレームから設計
-            </text>
-            <rect x="50" y="130" width="80" height="60" rx="2" fill="#f472b6" opacity="0.2" />
-            <rect x="140" y="130" width="80" height="60" rx="2" fill="#f472b6" opacity="0.2" />
-            <rect x="230" y="130" width="80" height="60" rx="2" fill="#f472b6" opacity="0.2" />
-            <text x="170" y="170" fontSize="8" fill="#be185d">
-              自由なレイアウト構成
-            </text>
+            {/* フルオーダー: テンプレートIDに応じた異なるオリジナルデザイン */}
+            {templateId === 'full-custom-1' && (
+              <>
+                {/* フルオーダー1: シンプルオリジナル - ミニマルデザイン */}
+                <rect x="20" y="15" width="360" height="40" rx="2" fill="#ec4899" opacity="0.15" stroke="#ec4899" strokeDasharray="4 4" strokeWidth="1.5" />
+                <text x="30" y="38" fontSize="10" fill="#db2777" fontWeight="bold">オリジナルヘッダー（ミニマル）</text>
+                <rect x="20" y="60" width="360" height="140" rx="2" fill="#f472b6" opacity="0.1" stroke="#ec4899" strokeDasharray="3 3" />
+                <text x="180" y="90" fontSize="11" fill="#be185d" fontWeight="bold">完全オリジナルコンテンツ</text>
+                <rect x="50" y="100" width="300" height="80" rx="1" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="180" y="145" fontSize="9" fill="#be185d">シンプルで効率的な構成</text>
+                <rect x="20" y="205" width="360" height="15" rx="2" fill="#f472b6" opacity="0.15" />
+                <text x="30" y="215" fontSize="8" fill="#be185d">ミニマルフッター</text>
+              </>
+            )}
+            {templateId === 'full-custom-2' && (
+              <>
+                {/* フルオーダー2: スタンダードオリジナル - バランス重視 */}
+                <rect x="20" y="10" width="360" height="45" rx="2" fill="#ec4899" opacity="0.15" stroke="#ec4899" strokeDasharray="4 4" strokeWidth="1.5" />
+                <text x="30" y="35" fontSize="10" fill="#db2777" fontWeight="bold">オリジナルヘッダー</text>
+                <rect x="20" y="60" width="360" height="30" rx="2" fill="#f472b6" opacity="0.1" stroke="#ec4899" strokeDasharray="3 3" />
+                <text x="30" y="80" fontSize="9" fill="#be185d">ヒーローセクション</text>
+                <rect x="20" y="95" width="170" height="75" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="30" y="115" fontSize="9" fill="#be185d">セクションA</text>
+                <rect x="210" y="95" width="170" height="75" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="220" y="115" fontSize="9" fill="#be185d">セクションB</text>
+                <rect x="20" y="175" width="360" height="35" rx="2" fill="#f472b6" opacity="0.15" />
+                <text x="30" y="195" fontSize="9" fill="#be185d">オリジナルフッター</text>
+              </>
+            )}
+            {templateId === 'full-custom-3' && (
+              <>
+                {/* フルオーダー3: プレミアムオリジナル - 高機能・多セクション */}
+                <rect x="20" y="8" width="360" height="50" rx="2" fill="#ec4899" opacity="0.15" stroke="#ec4899" strokeDasharray="4 4" strokeWidth="1.5" />
+                <text x="30" y="32" fontSize="10" fill="#db2777" fontWeight="bold">プレミアムオリジナルヘッダー</text>
+                <rect x="20" y="63" width="360" height="35" rx="2" fill="#f472b6" opacity="0.1" stroke="#ec4899" strokeDasharray="3 3" />
+                <text x="30" y="85" fontSize="9" fill="#be185d">大型ヒーローセクション</text>
+                <rect x="20" y="103" width="115" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="30" y="123" fontSize="8" fill="#be185d">機能A</text>
+                <rect x="145" y="103" width="115" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="155" y="123" fontSize="8" fill="#be185d">機能B</text>
+                <rect x="270" y="103" width="110" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="280" y="123" fontSize="8" fill="#be185d">機能C</text>
+                <rect x="20" y="158" width="360" height="40" rx="2" fill="#f472b6" opacity="0.1" stroke="#ec4899" strokeDasharray="3 3" />
+                <text x="30" y="180" fontSize="9" fill="#be185d">追加セクション</text>
+                <rect x="20" y="203" width="360" height="17" rx="2" fill="#f472b6" opacity="0.15" />
+                <text x="30" y="214" fontSize="8" fill="#be185d">フッター</text>
+              </>
+            )}
+            {(!templateId || templateId === 'full-custom-4') && (
+              <>
+                {/* フルオーダー4: エンタープライズオリジナル - 大規模・複雑構成 */}
+                <rect x="20" y="5" width="360" height="55" rx="2" fill="#ec4899" opacity="0.15" stroke="#ec4899" strokeDasharray="4 4" strokeWidth="1.5" />
+                <text x="30" y="30" fontSize="10" fill="#db2777" fontWeight="bold">エンタープライズヘッダー</text>
+                <rect x="20" y="65" width="360" height="40" rx="2" fill="#f472b6" opacity="0.1" stroke="#ec4899" strokeDasharray="3 3" />
+                <text x="30" y="88" fontSize="9" fill="#be185d">大型ヒーロー + ナビゲーション</text>
+                <rect x="20" y="110" width="85" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="30" y="130" fontSize="8" fill="#be185d">モジュール1</text>
+                <rect x="115" y="110" width="85" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="125" y="130" fontSize="8" fill="#be185d">モジュール2</text>
+                <rect x="210" y="110" width="85" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="220" y="130" fontSize="8" fill="#be185d">モジュール3</text>
+                <rect x="305" y="110" width="75" height="50" rx="2" fill="#f472b6" opacity="0.08" stroke="#ec4899" strokeDasharray="2 2" />
+                <text x="315" y="130" fontSize="8" fill="#be185d">モジュール4</text>
+                <rect x="20" y="165" width="360" height="30" rx="2" fill="#f472b6" opacity="0.1" stroke="#ec4899" strokeDasharray="3 3" />
+                <text x="30" y="185" fontSize="9" fill="#be185d">追加セクション群</text>
+                <rect x="20" y="200" width="360" height="20" rx="2" fill="#f472b6" opacity="0.15" />
+                <text x="30" y="213" fontSize="8" fill="#be185d">エンタープライズフッター</text>
+              </>
+            )}
           </>
         )}
       </svg>

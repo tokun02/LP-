@@ -9,8 +9,8 @@ const featureHighlights = [
       '目的やターゲット、構成案までを4ステップで整理。React Hook Form × Zod で入力内容をリアルタイム検証します。',
   },
   {
-    title: '料金テーブルと連動した瞬時の概算',
-    description: '用途別パッケージとオプション定義をもとに、ページ数やデザイン係数、多言語対応を即時計算して提示します。',
+    title: '料金テーブルと連動した瞬時の参考概算',
+    description: '用途別パッケージとオプション定義をもとに、ページ数やデザイン係数、多言語対応を即時計算して参考程度の概算見積もりを提示します。',
   },
   {
     title: 'ブラウザ保存で途中離脱にも強い',
@@ -34,13 +34,17 @@ export default function HomePage() {
                 LP制作見積シミュレーター
               </span>
               <h1 className="font-extrabold leading-tight text-slate-900 text-[clamp(24px,6vw,48px)]">
-                ヒアリングから概算見積までを
+                ヒアリングから参考概算見積までを
                 <br />
                 ひとつのUIで完結させる
               </h1>
               <p className="max-w-2xl text-slate-700 text-[clamp(14px,3.5vw,18px)] leading-[1.65]">
                 Next.js App Router と Netlify Functions をベースに、ヒアリングフォーム・料金算出・PDFドラフト・メール送信までを統合。
                 セールスが案件化までに必要とする情報を取りこぼさず、即日提案に繋げることを目指しました。
+                <br />
+                <span className="text-sm font-medium text-slate-600 mt-2 block">
+                  ※ 本アプリで算出される見積もりは参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
+                </span>
               </p>
               <div className="mt-4 grid grid-cols-1 gap-2.5 w-full sm:max-w-none sm:flex sm:flex-row sm:gap-3">
                 <Link
@@ -94,7 +98,7 @@ export default function HomePage() {
               このアプリでできること
             </h2>
             <p className="mt-1.5 p-lead">
-              企画段階のヒアリングから概算見積提示、社内共有までの流れを効率化します。
+              企画段階のヒアリングから参考概算見積提示、社内共有までの流れを効率化します。
             </p>
           </header>
           {featureHighlights.map((feature) => (
@@ -112,7 +116,11 @@ export default function HomePage() {
           <header className="relative rounded-lg sm:rounded-xl bg-white/95 backdrop-blur-sm border border-slate-200/50 shadow-sm p-4 sm:p-6 space-y-2 sm:space-y-3">
             <h2 className="h-section text-slate-900">見積シミュレーター</h2>
             <p className="p-lead text-slate-700">
-              必要な情報を入力すると、サマリーの内訳とPDFドラフトを自動生成します。
+              必要な情報を入力すると、参考程度の概算見積もりとPDFドラフトを自動生成します。
+              <br />
+              <span className="text-sm font-medium text-slate-600 mt-1 block">
+                ※ 本シミュレーターで算出される見積もりは参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
+              </span>
             </p>
           </header>
           <EstimateWizard />

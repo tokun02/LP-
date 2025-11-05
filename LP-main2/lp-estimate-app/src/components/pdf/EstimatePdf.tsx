@@ -74,11 +74,14 @@ export const EstimatePdfDocument = ({ values, breakdown, generatedAt = new Date(
     .slice(0, 4);
 
   return (
-    <Document title={`Webサイト見積_${values.projectName || '案件'}`}>
+    <Document title={`Webサイト参考概算見積_${values.projectName || '案件'}`}>
       <Page size="A4" style={styles.page}>
         <View>
-          <Text style={styles.heading}>Webサイト制作見積書（ドラフト）</Text>
+          <Text style={styles.heading}>Webサイト制作参考概算見積書（ドラフト）</Text>
           <Text style={styles.subtitle}>作成日: {generatedAt.toLocaleDateString()}</Text>
+          <Text style={[styles.subtitle, { fontSize: 10, color: '#64748b', marginTop: 4 }]}>
+            ※ 本見積もりは参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
+          </Text>
         </View>
 
         <View style={styles.section}>
@@ -125,7 +128,7 @@ export const EstimatePdfDocument = ({ values, breakdown, generatedAt = new Date(
         )}
 
         <View style={styles.section}>
-          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8 }}>見積内訳</Text>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8 }}>参考概算見積内訳</Text>
           <View style={styles.tableHeader}>
             <Text style={{ width: '40%' }}>項目</Text>
             <Text style={{ width: '20%', textAlign: 'right' }}>単価</Text>
