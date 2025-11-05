@@ -37,8 +37,11 @@ export const EstimateSummaryPanel = ({ breakdown, currentStep }: EstimateSummary
   return (
     <aside className="sticky top-24 space-y-3 rounded-lg border border-slate-200 bg-white card-ultra sm:card-compact shadow-lg shadow-blue-100/30">
       <div>
-        <h3 className="title-compact text-slate-900">概算見積</h3>
+        <h3 className="title-compact text-slate-900">参考概算見積</h3>
         <p className="hint-compact mt-0.5">入力内容に応じてリアルタイムに更新されます。</p>
+        <p className="hint-compact mt-1 text-xs text-slate-500">
+          ※ 参考程度の概算です。確定見積もりはヒアリング時に別途ご提示いたします。
+        </p>
       </div>
       <div className="stack-compact text-[13px] text-slate-600">
         <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
