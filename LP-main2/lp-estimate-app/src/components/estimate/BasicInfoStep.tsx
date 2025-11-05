@@ -9,7 +9,6 @@ import {
   PROJECT_PURPOSE_OPTIONS,
   GENDER_OPTIONS,
   AGE_GROUP_OPTIONS,
-  BRAND_IMAGE_OPTIONS,
   BRAND_VALUES_OPTIONS,
   BRAND_GOALS_OPTIONS,
   COMPETITOR_GOOD_OPTIONS,
@@ -148,7 +147,6 @@ export const BasicInfoStep = () => {
     register,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useFormContext<EstimateFormValues>();
 
