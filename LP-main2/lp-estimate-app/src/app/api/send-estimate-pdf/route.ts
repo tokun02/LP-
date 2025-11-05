@@ -48,7 +48,9 @@ const registerFonts = () => {
 registerFonts();
 
 // 開発者のメールアドレス（環境変数から取得、デフォルト値設定）
-const DEV_EMAIL = process.env.DEV_EMAIL || 'developer@example.com';
+// 複数のメールアドレスをカンマ区切りで指定可能（例: "email1@gmail.com,email2@gmail.com"）
+const DEV_EMAIL_RAW = process.env.DEV_EMAIL || 'developer@example.com';
+const DEV_EMAILS = DEV_EMAIL_RAW.split(',').map((email) => email.trim()).filter((email) => email.length > 0);
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
 const SMTP_USER = process.env.SMTP_USER || '';
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     // 環境変数の確認（開発環境では設定されていない可能性がある）
     const isDevelopment = process.env.NODE_ENV !== 'production';
-    const hasEmailConfig = SMTP_USER && SMTP_PASS && DEV_EMAIL;
+    const hasEmailConfig = SMTP_USER && SMTP_PASS && DEV_EMAILS.length > 0;
 
     if (isDevelopment && !hasEmailConfig) {
       // 開発環境で環境変数が設定されていない場合は、ログのみ出力
@@ -76,7 +78,8 @@ export async function POST(request: NextRequest) {
       console.log('環境変数が設定されていないため、メール送信をスキップしました');
       console.log('設定が必要な環境変数: DEV_EMAIL, SMTP_USER, SMTP_PASS, SMTP_HOST, SMTP_PORT, FROM_EMAIL');
       console.log('現在の環境変数状態:', {
-        DEV_EMAIL: DEV_EMAIL ? '設定済み' : '未設定',
+        DEV_EMAIL: DEV_EMAILS.length > 0 ? `設定済み（${DEV_EMAILS.length}件）` : '未設定',
+        DEV_EMAILS: DEV_EMAILS,
         SMTP_USER: SMTP_USER ? '設定済み' : '未設定',
         SMTP_PASS: SMTP_PASS ? '設定済み（' + SMTP_PASS.length + '文字）' : '未設定',
         SMTP_HOST: SMTP_HOST,
@@ -164,13 +167,13 @@ export async function POST(request: NextRequest) {
     const totalAmount = body.breakdown.totalWithTax.toLocaleString();
 
     console.log('📧 メール送信開始...', {
-      to: DEV_EMAIL,
+      to: DEV_EMAILS.join(', '),
       subject: `【見積PDF】${companyName}様 - ${projectName} (合計: ${totalAmount}円)`,
     });
 
     await transporter.sendMail({
       from: `"LP見積システム" <${FROM_EMAIL}>`,
-      to: DEV_EMAIL,
+      to: DEV_EMAILS.join(', '), // 複数のメールアドレスに送信
       subject: `【見積PDF】${companyName}様 - ${projectName} (合計: ${totalAmount}円)`,
       html: `
         <h2>新しい見積PDFがダウンロードされました</h2>

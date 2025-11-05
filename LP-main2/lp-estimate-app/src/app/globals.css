@@ -17,8 +17,7 @@ body {
 }
 
 body {
-  background: radial-gradient(circle at top right, rgba(99, 179, 237, 0.18), transparent 45%),
-    radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.15), transparent 50%), #f8fafc;
+  background: #f8fafc;
   color: #0f172a;
   font-family: var(--font-sans), 'Noto Sans JP', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
     sans-serif;

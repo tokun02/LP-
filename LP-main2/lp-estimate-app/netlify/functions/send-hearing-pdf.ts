@@ -7,7 +7,9 @@ import { createHearingDocument } from '../../src/components/pdf/HearingPdf';
 import type { EstimateFormValues } from '../../src/types/estimate';
 
 // 開発者のメールアドレス（環境変数から取得、デフォルト値設定）
-const DEV_EMAIL = process.env.DEV_EMAIL || 'developer@example.com';
+// 複数のメールアドレスをカンマ区切りで指定可能（例: "email1@gmail.com,email2@gmail.com"）
+const DEV_EMAIL_RAW = process.env.DEV_EMAIL || 'developer@example.com';
+const DEV_EMAILS = DEV_EMAIL_RAW.split(',').map((email) => email.trim()).filter((email) => email.length > 0);
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
 const SMTP_USER = process.env.SMTP_USER || '';
@@ -74,7 +76,7 @@ export const handler: Handler = async (event, context) => {
 
     await transporter.sendMail({
       from: `"LP見積システム" <${FROM_EMAIL}>`,
-      to: DEV_EMAIL,
+      to: DEV_EMAILS.join(', '), // 複数のメールアドレスに送信
       subject: `【新規ヒアリング】${companyName}様 - ${projectName}`,
       html: `
         <h2>新しいヒアリングシートが提出されました</h2>

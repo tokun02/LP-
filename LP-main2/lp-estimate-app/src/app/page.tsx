@@ -27,7 +27,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen pb-24 container-pad">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 sm:gap-16 md:gap-20 pb-12 pt-12 sm:pt-16">
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500/10 via-indigo-500/10 to-blue-500/5 p-3 sm:p-6 md:p-10 shadow-lg shadow-sky-200/40 backdrop-blur section-y min-h-[88vh] flex items-center">
+        <section className="relative section-y min-h-[88vh] flex items-center">
           <div className="relative z-10 grid gap-6 sm:gap-10 lg:grid-cols-[1.1fr_minmax(0,0.9fr)] lg:items-center">
             <div className="space-y-4 sm:space-y-6">
               <span className="inline-flex items-center rounded-full border border-sky-300/70 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-600 shadow-sm">
@@ -82,7 +82,9 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-sky-400/30 blur-3xl edge-bleed" />
+          <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-sky-400/30 blur-3xl edge-bleed" />
+          <div className="pointer-events-none absolute -bottom-24 right-0 h-64 w-64 rounded-full bg-sky-400/30 blur-3xl edge-bleed" />
+          <div className="pointer-events-none absolute top-1/2 -left-20 -translate-y-1/2 h-96 w-96 rounded-full bg-sky-400/30 blur-3xl edge-bleed" />
           <div className="pointer-events-none absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl edge-bleed" />
         </section>
 

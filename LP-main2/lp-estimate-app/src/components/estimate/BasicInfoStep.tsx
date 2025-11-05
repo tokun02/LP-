@@ -680,6 +680,70 @@ export const BasicInfoStep = () => {
       >
         <div className="space-y-6">
         <div>
+          <label className="block text-sm font-medium text-slate-700">
+            競合他社のサービスと比べて、御社のサービスの違いや強みは何ですか？（複数選択可）<span className="text-red-500 ml-0.5">*</span>
+          </label>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {STRENGTH_OPTIONS.map((strength) => {
+              const selectedStrengths = watch('companyStrengths') ?? [];
+              const active = selectedStrengths.includes(strength);
+              return (
+                <button
+                  key={strength}
+                  type="button"
+                  onClick={() => {
+                    const exists = selectedStrengths.includes(strength);
+                    const next = exists
+                      ? selectedStrengths.filter((s) => s !== strength)
+                      : [...selectedStrengths, strength];
+                    setValue('companyStrengths', next, { shouldDirty: true, shouldValidate: true });
+                  }}
+                  className={clsx(
+                    'rounded-lg border px-4 py-2 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    active
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
+                  )}
+                >
+                  {strength}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-slate-700">御社の強みについて詳しく教えてください</label>
+            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notApplicableFields.has('companyStrengthsDetails')}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setNotApplicableFields((prev) => new Set(prev).add('companyStrengthsDetails'));
+                    setValue('companyStrengthsDetails', '', { shouldDirty: true });
+                  } else {
+                    setNotApplicableFields((prev) => {
+                      const next = new Set(prev);
+                      next.delete('companyStrengthsDetails');
+                      return next;
+                    });
+                  }
+                }}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
+              />
+              <span>該当なし</span>
+            </label>
+          </div>
+          <textarea
+            rows={3}
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
+            placeholder="強みについて詳しく記入してください"
+            disabled={notApplicableFields.has('companyStrengthsDetails')}
+            {...register('companyStrengthsDetails')}
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの良いところ（複数選択可）<span className="text-red-500 ml-0.5">*</span></label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {COMPETITOR_GOOD_OPTIONS.map((point) => {
@@ -801,70 +865,6 @@ export const BasicInfoStep = () => {
             placeholder="改善点の詳細について記入してください"
             disabled={notApplicableFields.has('competitorImproveDetails')}
             {...register('competitorImproveDetails')}
-          />
-        </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-            競合他社のサービスと比べて、御社のサービスの違いや強みは何ですか？（複数選択可）<span className="text-red-500 ml-0.5">*</span>
-            </label>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {STRENGTH_OPTIONS.map((strength) => {
-              const selectedStrengths = watch('companyStrengths') ?? [];
-              const active = selectedStrengths.includes(strength);
-              return (
-                <button
-                  key={strength}
-                  type="button"
-                  onClick={() => {
-                    const exists = selectedStrengths.includes(strength);
-                    const next = exists
-                      ? selectedStrengths.filter((s) => s !== strength)
-                      : [...selectedStrengths, strength];
-                    setValue('companyStrengths', next, { shouldDirty: true, shouldValidate: true });
-                  }}
-                  className={clsx(
-                    'rounded-lg border px-4 py-2 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
-                    active
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
-                  )}
-                >
-                  {strength}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium text-slate-700">御社の強みについて詳しく教えてください</label>
-            <label className="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={notApplicableFields.has('companyStrengthsDetails')}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setNotApplicableFields((prev) => new Set(prev).add('companyStrengthsDetails'));
-                    setValue('companyStrengthsDetails', '', { shouldDirty: true });
-                  } else {
-                    setNotApplicableFields((prev) => {
-                      const next = new Set(prev);
-                      next.delete('companyStrengthsDetails');
-                      return next;
-                    });
-                  }
-                }}
-                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500/20"
-              />
-              <span>該当なし</span>
-            </label>
-          </div>
-          <textarea
-            rows={3}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
-            placeholder="強みについて詳しく記入してください"
-            disabled={notApplicableFields.has('companyStrengthsDetails')}
-            {...register('companyStrengthsDetails')}
           />
         </div>
         </div>

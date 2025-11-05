@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <body className={`${noto.variable} bg-slate-50 text-slate-900 antialiased`}>{children}</body>
+      <body className={`${noto.variable} text-slate-900 antialiased`}>{children}</body>
     </html>
   );
 }
