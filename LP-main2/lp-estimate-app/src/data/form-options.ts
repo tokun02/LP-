@@ -367,7 +367,7 @@ export const WIREFRAME_TEMPLATES: WireframeTemplate[] = [
 ];
 
 export const WIREFRAME_OPTIONS = [
-  ...WIREFRAME_TEMPLATES.map((t) => t.id),
+  'template',
   'semi-custom',
   'full-custom',
 ] as const;
@@ -375,17 +375,13 @@ export const WIREFRAME_OPTIONS = [
 export type WireframeType = (typeof WIREFRAME_OPTIONS)[number];
 
 export const WIREFRAME_TYPE_LABELS: Record<WireframeType, string> = {
-  'template-standard-1': 'テンプレート1（標準-ベーシック）',
-  'template-standard-2': 'テンプレート2（標準-スタンダード）',
-  'template-standard-3': 'テンプレート3（標準-プレミアム）',
+  'template': 'テンプレート',
   'semi-custom': 'セミオーダー',
   'full-custom': 'フルオーダー',
 };
 
 export const WIREFRAME_TYPE_DESCRIPTIONS: Record<WireframeType, string> = {
-  'template-standard-1': 'シンプルでわかりやすいレイアウト構成。小規模サイトに最適。',
-  'template-standard-2': 'バランスの取れた標準的なレイアウト構成。一般的なサイトに最適。',
-  'template-standard-3': '充実したセクション構成。情報量の多いサイトに最適。',
+  'template': '標準的なテンプレートから選択。コストと制作期間を抑えられます。',
   'semi-custom': 'テンプレートをベースに、ご要望に合わせてカスタマイズします。',
   'full-custom': '完全オリジナルのワイヤーフレームから作成します。',
 };

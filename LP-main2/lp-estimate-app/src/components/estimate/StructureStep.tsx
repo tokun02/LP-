@@ -4,15 +4,8 @@ import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { basePackages, options as tariffOptions } from '@/data/tariffs';
-import {
-  WIREFRAME_TEMPLATES,
-  WIREFRAME_TYPE_LABELS,
-  WIREFRAME_TYPE_DESCRIPTIONS,
-  WIREFRAME_DEMO_URLS,
-} from '@/data/form-options';
 import type { EstimateFormValues } from '@/types/estimate';
 import { FormError } from '@/components/ui/form-error';
-import { WireframePreview } from '@/components/ui/wireframe-preview';
 import clsx from 'clsx';
 
 export const StructureStep = () => {
@@ -198,185 +191,54 @@ export const StructureStep = () => {
         <header>
           <h3 className="text-lg font-semibold text-slate-900">ワイヤーフレーム・構成設計</h3>
           <p className="text-sm text-slate-500">
-            サイトの構造とレイアウト設計方法を選択します。テンプレートから選ぶか、オーダーメイドで作成します。
+            サイトの構造とレイアウト設計方法を選択します。
           </p>
         </header>
-        <div className="space-y-4">
-          {/* テンプレート選択 */}
-          <div>
-            <p className="mb-3 text-sm font-medium text-slate-700">テンプレートから選ぶ（推奨）</p>
-            <div className="grid gap-ultra md:gap-4 md:grid-cols-3">
-              {WIREFRAME_TEMPLATES.map((template) => {
-                const active = wireframeType === template.id;
-                return (
-                  <button
-                    key={template.id}
-                    type="button"
-                    onClick={() => {
-                      setValue('wireframeType', template.id, { shouldDirty: true, shouldValidate: true });
-                    }}
-                    className={clsx(
-                      'group rounded-xl border p-0 overflow-hidden text-left shadow-sm transition-all hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
-                      active
-                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 ring-2 ring-blue-500/30'
-                        : 'border-slate-200 bg-white hover:border-blue-300',
+        <div className="grid gap-4 md:grid-cols-3">
+          {([
+            { id: 'template', label: 'テンプレート', description: '標準的なテンプレートから選択。コストと制作期間を抑えられます。' },
+            { id: 'semi-custom', label: 'セミオーダー', description: 'テンプレートをベースに、ご要望に合わせてカスタマイズします。' },
+            { id: 'full-custom', label: 'フルオーダー', description: '完全オリジナルのワイヤーフレームから作成します。' },
+          ] as const).map((option) => {
+            const active = wireframeType === option.id;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+                  setValue('wireframeType', option.id, { shouldDirty: true, shouldValidate: true });
+                }}
+                className={clsx(
+                  'rounded-xl border p-5 text-left shadow-sm transition-all hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                  active
+                    ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 ring-2 ring-blue-500/30'
+                    : 'border-slate-200 bg-white hover:border-blue-300',
+                )}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <h4 className="text-sm font-bold text-slate-900">{option.label}</h4>
+                    {option.id === 'full-custom' && (
+                      <span className="mt-1 inline-block rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-700">
+                        完全オリジナル
+                      </span>
                     )}
-                  >
-                    {/* ワイヤーフレームプレビュー */}
-                    <div className={clsx('transition-opacity', active ? 'opacity-100' : 'opacity-90 group-hover:opacity-100')}>
-                      <WireframePreview
-                        type={template.id.replace('template-', '') as 'standard-1' | 'standard-2' | 'standard-3'}
-                        previewUrl={template.previewUrl}
-                      />
+                  </div>
+                  {active && (
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white shadow-md">
+                      ✓
                     </div>
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <h4 className="text-sm font-bold text-slate-900">{template.name}</h4>
-                          {template.priceModifier && (
-                            <span
-                              className={clsx(
-                                'mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-semibold',
-                                template.priceModifier < 1.0
-                                  ? 'bg-emerald-100 text-emerald-700'
-                                  : template.priceModifier > 1.0
-                                  ? 'bg-orange-100 text-orange-700'
-                                  : 'bg-blue-100 text-blue-700',
-                              )}
-                            >
-                              {template.priceModifier < 1.0
-                                ? `-${Math.round((1 - template.priceModifier) * 100)}%`
-                                : template.priceModifier > 1.0
-                                ? `+${Math.round((template.priceModifier - 1) * 100)}%`
-                                : '標準価格'}
-                            </span>
-                          )}
-                        </div>
-                        {active && (
-                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white shadow-md">
-                            ✓
-                          </div>
-                        )}
-                      </div>
-                      <p className="mt-3 text-xs leading-relaxed text-slate-600">{template.description}</p>
-                      <div className="mt-3 flex flex-wrap gap-1">
-                        {template.useCase.slice(0, 2).map((useCase) => (
-                          <span
-                            key={useCase}
-                            className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600"
-                          >
-                            {useCase}
-                          </span>
-                        ))}
-                      </div>
-                      {template.estimatedTime && (
-                        <p className="mt-3 text-[10px] text-slate-400">想定制作期間: {template.estimatedTime}</p>
-                      )}
-                      {template.previewUrl && (
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(template.previewUrl, '_blank', 'noopener,noreferrer');
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(template.previewUrl, '_blank', 'noopener,noreferrer');
-                            }
-                          }}
-                          className="mt-3 inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100 hover:text-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-                        >
-                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                          実装例を別タブで見る
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* オーダーメイド選択 */}
-          <div className="border-t border-slate-200 pt-4">
-            <p className="mb-3 text-sm font-medium text-slate-700">オーダーメイドで作成</p>
-            <div className="grid gap-4 md:grid-cols-2">
-              {(['semi-custom', 'full-custom'] as const).map((type) => {
-                const active = wireframeType === type;
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => {
-                      setValue('wireframeType', type, { shouldDirty: true, shouldValidate: true });
-                    }}
-                    className={clsx(
-                      'group rounded-xl border p-0 overflow-hidden text-left shadow-sm transition-all hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/40',
-                      active
-                        ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 ring-2 ring-indigo-500/30'
-                        : 'border-slate-200 bg-white hover:border-indigo-300',
-                    )}
-                  >
-                    {/* ワイヤーフレームプレビュー */}
-                    <div className={clsx('transition-opacity', active ? 'opacity-100' : 'opacity-90 group-hover:opacity-100')}>
-                      <WireframePreview type={type} previewUrl={WIREFRAME_DEMO_URLS[type]} />
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <h4 className="text-sm font-bold text-slate-900">{WIREFRAME_TYPE_LABELS[type]}</h4>
-                          <span className="mt-1 inline-block rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-700">
-                            {type === 'full-custom' ? '完全オリジナル' : 'カスタマイズ可'}
-                          </span>
-                        </div>
-                        {active && (
-                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white shadow-md">
-                            ✓
-                          </div>
-                        )}
-                      </div>
-                      <p className="mt-3 text-xs leading-relaxed text-slate-600">
-                        {WIREFRAME_TYPE_DESCRIPTIONS[type]}
-                      </p>
-                      {WIREFRAME_DEMO_URLS[type] && (
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(WIREFRAME_DEMO_URLS[type], '_blank', 'noopener,noreferrer');
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.open(WIREFRAME_DEMO_URLS[type], '_blank', 'noopener,noreferrer');
-                            }
-                          }}
-                          className="mt-3 inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-3 py-2 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
-                        >
-                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                          実装例を別タブで見る
-                        </div>
-                      )}
-                      {type === 'full-custom' && (
-                        <p className="mt-3 text-[10px] font-medium text-indigo-600">
-                          ※ フルオーダーの場合、追加費用が発生する場合があります
-                        </p>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                  )}
+                </div>
+                <p className="mt-3 text-xs leading-relaxed text-slate-600">{option.description}</p>
+                {option.id === 'full-custom' && (
+                  <p className="mt-3 text-[10px] font-medium text-indigo-600">
+                    ※ フルオーダーの場合、追加費用が発生する場合があります
+                  </p>
+                )}
+              </button>
+            );
+          })}
         </div>
         <FormError message={errors.wireframeType?.message} />
       </section>
