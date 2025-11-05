@@ -155,9 +155,9 @@ export const EstimateWizard = () => {
     const requiredSections = [
       // 1. 基本情報（詳細）
       {
-        fields: ['companyName', 'contactPersonName', 'contactPhone', 'contactEmail'],
+        fields: ['companyName', 'contactPersonName', 'contactPhone', 'contactEmail', 'industry'],
         check: (v: EstimateFormValues) => {
-          return v.companyName && v.contactPersonName && v.contactPhone && v.contactEmail;
+          return v.companyName && v.contactPersonName && v.contactPhone && v.contactEmail && v.industry;
         },
       },
       // 2. プロジェクト概要（詳細）
@@ -169,22 +169,28 @@ export const EstimateWizard = () => {
       },
       // 3. ブランドイメージ・ポジショニング
       {
-        fields: ['brandImage', 'brandValues', 'brandGoals'],
+        fields: ['brandValues', 'brandGoals'],
         check: (v: EstimateFormValues) => {
-          const brandImage = !!v.brandImage;
           const brandValues = Array.isArray(v.brandValues) && v.brandValues.length > 0;
           const brandGoals = Array.isArray(v.brandGoals) && v.brandGoals.length > 0;
-          return brandImage && brandValues && brandGoals;
+          return brandValues && brandGoals;
+        },
+      },
+      // 3-2. ターゲット情報
+      {
+        fields: ['targetGender', 'targetAgeGroups'],
+        check: (v: EstimateFormValues) => {
+          const targetGender = !!v.targetGender;
+          const targetAgeGroups = Array.isArray(v.targetAgeGroups) && v.targetAgeGroups.length > 0;
+          return targetGender && targetAgeGroups;
         },
       },
       // 4. 競合分析・差別化戦略
       {
-        fields: ['competitorGoodPoints', 'competitorImprovePoints', 'companyStrengths'],
+        fields: ['companyStrengths'],
         check: (v: EstimateFormValues) => {
-          const goodPoints = Array.isArray(v.competitorGoodPoints) && v.competitorGoodPoints.length > 0;
-          const improvePoints = Array.isArray(v.competitorImprovePoints) && v.competitorImprovePoints.length > 0;
           const strengths = Array.isArray(v.companyStrengths) && v.companyStrengths.length > 0;
-          return goodPoints && improvePoints && strengths;
+          return strengths;
         },
       },
       // 5. 予算・スケジュール（詳細）
@@ -196,9 +202,12 @@ export const EstimateWizard = () => {
       },
       // 6. 現在のウェブサイト状況
       {
-        fields: ['existingSite'],
+        fields: ['existingSite', 'existingSiteUrl', 'currentSiteIssues'],
         check: (v: EstimateFormValues) => {
-          return !!v.existingSite;
+          if (v.existingSite === 'あり') {
+            return !!v.existingSiteUrl && Array.isArray(v.currentSiteIssues) && v.currentSiteIssues.length > 0;
+          }
+          return true; // 既存サイトがない場合は必須ではない
         },
       },
       // 7. デザイン要望・参考サイト
@@ -223,21 +232,28 @@ export const EstimateWizard = () => {
           return !!v.seoImportance;
         },
       },
-      // 10. 技術・インフラ要件
+      // 6. ウェブサイト・技術要件（統合済み）
       {
-        fields: ['domainChoice', 'serverChoice'],
+        fields: ['existingSite', 'existingSiteUrl', 'currentSiteIssues', 'domainChoice', 'serverChoice'],
         check: (v: EstimateFormValues) => {
+          // 既存サイトがある場合の必須チェック
+          if (v.existingSite === 'あり') {
+            const hasUrl = !!v.existingSiteUrl;
+            const hasIssues = Array.isArray(v.currentSiteIssues) && v.currentSiteIssues.length > 0;
+            if (!hasUrl || !hasIssues) return false;
+          }
+          // ドメインとサーバーの必須チェック
           return !!v.domainChoice && !!v.serverChoice;
         },
       },
-      // 11. 保守・運用について
+      // 10. 保守・運用について
       {
         fields: ['maintenanceContract'],
         check: (v: EstimateFormValues) => {
           return !!v.maintenanceContract;
         },
       },
-      // 12. プロジェクト進行・その他
+      // 11. プロジェクト進行・その他
       {
         fields: ['approvalFlow'],
         check: (v: EstimateFormValues) => {

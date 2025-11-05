@@ -185,7 +185,7 @@ export const BasicInfoStep = () => {
         const projectValue = values['projectPurpose'];
         return projectValue && Array.isArray(projectValue) && projectValue.length > 0 ? 100 : 0;
       case 'brand':
-        const brandFields = ['brandImage', 'brandValues', 'brandGoals'];
+        const brandFields = ['brandValues', 'brandGoals'];
         const brandFilled = brandFields.filter((f) => {
           const val = values[f as keyof EstimateFormValues];
           if (Array.isArray(val)) return val.length > 0;
@@ -193,20 +193,34 @@ export const BasicInfoStep = () => {
         }).length;
         return (brandFilled / brandFields.length) * 100;
       case 'competitor':
-        const competitorFields = ['competitorGoodPoints', 'competitorImprovePoints', 'companyStrengths'];
-        const competitorFilled = competitorFields.filter((f) => {
-          const val = values[f as keyof EstimateFormValues];
-          if (Array.isArray(val)) return val.length > 0;
-          return !!val;
-        }).length;
-        return (competitorFilled / competitorFields.length) * 100;
+        // competitorGoodPointsとcompetitorImprovePointsは任意になったので、companyStrengthsのみ必須
+        const competitorValue = values['companyStrengths'];
+        const competitorFilled = Array.isArray(competitorValue) && competitorValue.length > 0 ? 1 : 0;
+        return competitorFilled * 100;
       case 'budget':
         const budgetFields = ['budgetDetail', 'deadline'];
         const budgetFilled = budgetFields.filter((f) => values[f as keyof EstimateFormValues]).length;
         return (budgetFilled / budgetFields.length) * 100;
       case 'current-site':
-        const siteValue = values['existingSite'];
-        return siteValue ? 100 : 0;
+        // 既存サイトの有無、ドメイン、サーバーをチェック
+        const siteFields = ['existingSite', 'domainChoice', 'serverChoice'];
+        const siteFilled = siteFields.filter((f) => {
+          const val = values[f as keyof EstimateFormValues];
+          return !!val;
+        }).length;
+        // 既存サイトがある場合、URLと問題点もチェック
+        if (values['existingSite'] === 'あり') {
+          const urlValue = values['existingSiteUrl'];
+          const issuesValue = values['currentSiteIssues'];
+          const hasUrl = !!urlValue;
+          const hasIssues = Array.isArray(issuesValue) && issuesValue.length > 0;
+          if (hasUrl && hasIssues) {
+            return 100;
+          } else {
+            return (siteFilled / (siteFields.length + 2)) * 100;
+          }
+        }
+        return (siteFilled / siteFields.length) * 100;
       case 'design':
         const designFields = ['mainColor', 'logoProvided'];
         const designFilled = designFields.filter((f) => values[f as keyof EstimateFormValues]).length;
@@ -222,10 +236,6 @@ export const BasicInfoStep = () => {
       case 'seo':
         const seoValue = values['seoImportance'];
         return seoValue ? 100 : 0;
-      case 'tech':
-        const techFields = ['domainChoice', 'serverChoice'];
-        const techFilled = techFields.filter((f) => values[f as keyof EstimateFormValues]).length;
-        return (techFilled / techFields.length) * 100;
       case 'maintenance':
         const maintenanceValue = values['maintenanceContract'];
         return maintenanceValue ? 100 : 0;
@@ -300,6 +310,31 @@ export const BasicInfoStep = () => {
             />
             <FormError message={errors.contactPhone?.message} />
           </div>
+          <div>
+            <label className="block label-compact sm:text-base font-semibold text-slate-900 mb-0.5 sm:mb-3">
+              業種・業態<span className="text-red-500 ml-0.5">*</span>
+            </label>
+            <select
+              className="w-full rounded-lg border-2 border-slate-300 field-compact input-zoom-safe shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[44px] bg-white sm:px-4 sm:py-3.5 sm:text-base sm:min-h-[52px] sm:rounded-xl"
+              {...register('industry')}
+            >
+              <option value="">選択してください</option>
+              {INDUSTRY_OPTIONS.map((industry) => (
+                <option key={industry} value={industry}>
+                  {industry}
+                </option>
+              ))}
+            </select>
+            <FormError message={errors.industry?.message} />
+            {watch('industry') === 'その他' && (
+              <input
+                type="text"
+                className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                placeholder="具体的にご記入ください"
+                {...register('industryOther')}
+              />
+            )}
+          </div>
           {/* 任意項目を下部に配置 */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
@@ -373,28 +408,6 @@ export const BasicInfoStep = () => {
               disabled={notApplicableFields.has('location')}
               {...register('location')}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700">業種・業態</label>
-            <select
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              {...register('industry')}
-            >
-              <option value="">選択してください</option>
-              {INDUSTRY_OPTIONS.map((industry) => (
-                <option key={industry} value={industry}>
-                  {industry}
-                </option>
-              ))}
-            </select>
-            {watch('industry') === 'その他' && (
-              <input
-                type="text"
-                className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                placeholder="具体的にご記入ください"
-                {...register('industryOther')}
-              />
-            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">従業員数</label>
@@ -499,7 +512,9 @@ export const BasicInfoStep = () => {
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700">メインターゲットの性別</label>
+            <label className="block text-sm font-medium text-slate-700">
+              メインターゲットの性別<span className="text-red-500 ml-0.5">*</span>
+            </label>
             <select
               className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               {...register('targetGender')}
@@ -511,9 +526,12 @@ export const BasicInfoStep = () => {
                 </option>
               ))}
             </select>
+            <FormError message={errors.targetGender?.message} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">メインターゲットの年齢層（複数選択可）</label>
+            <label className="block text-sm font-medium text-slate-700">
+              メインターゲットの年齢層（複数選択可）<span className="text-red-500 ml-0.5">*</span>
+            </label>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {AGE_GROUP_OPTIONS.map((age) => {
                 const selectedAges = watch('targetAgeGroups') ?? [];
@@ -539,6 +557,7 @@ export const BasicInfoStep = () => {
                 );
               })}
             </div>
+            <FormError message={errors.targetAgeGroups?.message} />
           </div>
         </div>
         <div>
@@ -588,22 +607,6 @@ export const BasicInfoStep = () => {
         completionRate={calculateCompletion('brand')}
       >
         <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-            御社のブランドを一言で表すとしたら？（1つだけ選択）<span className="text-red-500 ml-0.5">*</span>
-            </label>
-          <select
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            {...register('brandImage')}
-          >
-            <option value="">選択してください</option>
-            {BRAND_IMAGE_OPTIONS.map((image, idx) => (
-              <option key={image} value={image}>
-                {String.fromCharCode(65 + idx)}. {image}
-              </option>
-            ))}
-          </select>
-        </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">
             御社のブランドが大切にしている価値観は何ですか？（複数選択可）<span className="text-red-500 ml-0.5">*</span>
@@ -744,7 +747,7 @@ export const BasicInfoStep = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの良いところ（複数選択可）<span className="text-red-500 ml-0.5">*</span></label>
+          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの良いところ（複数選択可）</label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {COMPETITOR_GOOD_OPTIONS.map((point) => {
               const selectedPoints = watch('competitorGoodPoints') ?? [];
@@ -806,7 +809,7 @@ export const BasicInfoStep = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの改善点（複数選択可）<span className="text-red-500 ml-0.5">*</span></label>
+          <label className="block text-sm font-medium text-slate-700">競合他社のウェブサイトの改善点（複数選択可）</label>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {COMPETITOR_IMPROVE_OPTIONS.map((point) => {
               const selectedPoints = watch('competitorImprovePoints') ?? [];
@@ -980,12 +983,12 @@ export const BasicInfoStep = () => {
         </div>
       </AccordionSection>
 
-      {/* 6. 現在のウェブサイト状況 */}
+      {/* 6. ウェブサイト・技術要件 */}
       <AccordionSection
         id="current-site"
         number={6}
-        title="現在のウェブサイト状況"
-        description="既存サイトがある場合、現状をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
+        title="ウェブサイト・技術要件"
+        description="既存サイトの有無と、新しいサイトの技術的な要件をお聞かせください。既存サイトがある場合は現状も、新規の場合は技術要件もお聞かせください。"
         isExpanded={expandedSections.has('current-site')}
         onToggle={() => toggleSection('current-site')}
         isRequired={true}
@@ -1013,25 +1016,44 @@ export const BasicInfoStep = () => {
                     className="sr-only"
                     value={option}
                     {...register('existingSite')}
+                    onChange={(e) => {
+                      setValue('existingSite', e.target.value, { shouldDirty: true, shouldValidate: true });
+                      // 既存サイトがない場合は、ドメイン・サーバーをリセット
+                      if (e.target.value === 'なし') {
+                        setValue('domainChoice', '', { shouldDirty: true });
+                        setValue('serverChoice', '', { shouldDirty: true });
+                      } else if (e.target.value === 'あり') {
+                        // 既存サイトがある場合は、ドメイン・サーバーを「既に保有」に自動設定
+                        setValue('domainChoice', '既に保有', { shouldDirty: true, shouldValidate: true });
+                        setValue('serverChoice', '既に保有', { shouldDirty: true, shouldValidate: true });
+                      }
+                    }}
                   />
             </label>
               );
             })}
           </div>
         </div>
+        
+        {/* 既存サイトがある場合 */}
         {watch('existingSite') === 'あり' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-slate-700">既存サイトのURL</label>
+              <label className="block text-sm font-medium text-slate-700">
+                既存サイトのURL<span className="text-red-500 ml-0.5">*</span>
+              </label>
               <input
                 type="url"
                 className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 placeholder="https://"
                 {...register('existingSiteUrl')}
               />
+              <FormError message={errors.existingSiteUrl?.message} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700">現在のサイトの問題点（複数選択可）</label>
+              <label className="block text-sm font-medium text-slate-700">
+                現在のサイトの問題点（複数選択可）<span className="text-red-500 ml-0.5">*</span>
+              </label>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {CURRENT_SITE_ISSUES_OPTIONS.map((issue) => {
                   const selectedIssues = watch('currentSiteIssues') ?? [];
@@ -1059,6 +1081,7 @@ export const BasicInfoStep = () => {
                   );
                 })}
               </div>
+              <FormError message={errors.currentSiteIssues?.message} />
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -1108,6 +1131,137 @@ export const BasicInfoStep = () => {
             </div>
           </>
         )}
+        
+        {/* 技術要件（既存サイトがない場合、または既存サイトがある場合も表示） */}
+        <div className="border-t border-slate-200 pt-6">
+          <h4 className="text-base font-semibold text-slate-900 mb-4">新しいサイトの技術要件</h4>
+          
+          
+          <div className="space-y-6">
+            {/* 既存サイトがない場合のみドメインの質問を表示 */}
+            {watch('existingSite') !== 'あり' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700">ドメインについて<span className="text-red-500 ml-0.5">*</span></label>
+                <p className="mt-1 text-xs text-slate-500">
+                  ドメインとは？ウェブサイトのアドレス（URL）のことで、「example.com」のような形式です。
+                </p>
+                <select
+                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  {...register('domainChoice')}
+                >
+                  <option value="">選択してください</option>
+                  {/* 既存サイトがない場合、「既存ドメインを使用」は表示しない（矛盾を避けるため） */}
+                  {DOMAIN_CHOICES.filter((choice) => choice !== '既存ドメインを使用').map((choice) => (
+                    <option key={choice} value={choice}>
+                      {choice}
+                    </option>
+                  ))}
+                </select>
+                {watch('domainChoice') === '新規取得希望' && (
+                  <div className="mt-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      希望するURL（ドメイン名）
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      placeholder="例：example.com（.comや.jpなどは不要です）"
+                      {...register('domainDesired')}
+                    />
+                    <p className="mt-1 text-xs text-slate-500">
+                      希望するドメイン名を入力してください。取得可能かどうか確認します。
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* 既存サイトがある場合、ドメインの説明を表示 */}
+            {watch('existingSite') === 'あり' && (
+              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <p className="text-sm text-slate-700">
+                  <strong>ドメインについて：</strong>既存サイトのURLを入力していただいたため、ドメインは「既に保有」として自動設定されています。
+                </p>
+              </div>
+            )}
+            {/* 既存サイトがない場合のみサーバーの質問を表示 */}
+            {watch('existingSite') !== 'あり' && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700">サーバーについて<span className="text-red-500 ml-0.5">*</span></label>
+                <p className="mt-1 text-xs text-slate-500">
+                  サーバーとは？ウェブサイトのデータを保存して、インターネット上に公開するためのコンピューターのことです。
+                </p>
+                <select
+                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  {...register('serverChoice')}
+                >
+                  <option value="">選択してください</option>
+                  {SERVER_CHOICES.map((choice) => (
+                    <option key={choice} value={choice}>
+                      {choice}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            {/* 既存サイトがある場合、サーバーの説明を表示 */}
+            {watch('existingSite') === 'あり' && (
+              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <p className="text-sm text-slate-700">
+                  <strong>サーバーについて：</strong>既存サイトがあるため、サーバーは「既に保有」として自動設定されています。
+                </p>
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-slate-700">SSL証明書の導入</label>
+              <p className="mt-1 text-xs text-slate-500">
+                SSL証明書とは？ウェブサイトの通信を暗号化して安全にするためのもので、URLが「https://」で始まります。
+              </p>
+              <select
+                className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                {...register('sslChoice')}
+              >
+                <option value="">選択してください</option>
+                {SSL_CHOICES.map((choice) => (
+                  <option key={choice} value={choice}>
+                    {choice}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700">対応デバイス（複数選択可）</label>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {DEVICES_CHOICES.map((device) => {
+                  const selectedDevices = watch('devicesSupported') ?? [];
+                  const active = selectedDevices.includes(device);
+                  return (
+                    <button
+                      key={device}
+                      type="button"
+                      onClick={() => {
+                        const exists = selectedDevices.includes(device);
+                        const next = exists
+                          ? selectedDevices.filter((d) => d !== device)
+                          : [...selectedDevices, device];
+                        setValue('devicesSupported', next, { shouldDirty: true, shouldValidate: true });
+                      }}
+                      className={clsx(
+                        'rounded-lg border px-4 py-2 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                        active
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
+                      )}
+                    >
+                      {device}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </AccordionSection>
 
@@ -1559,114 +1713,11 @@ export const BasicInfoStep = () => {
         </div>
       </AccordionSection>
 
-      {/* 10. 技術・インフラ要件 */}
-      <AccordionSection
-        id="tech"
-        number={10}
-        title="技術・インフラ要件"
-        description="ドメインやサーバーなどの技術的な要件をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
-        isExpanded={expandedSections.has('tech')}
-        onToggle={() => toggleSection('tech')}
-        isRequired={true}
-        completionRate={calculateCompletion('tech')}
-      >
-        <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-slate-700">ドメインについて<span className="text-red-500 ml-0.5">*</span></label>
-          <p className="mt-1 text-xs text-slate-500">
-            ドメインとは？ウェブサイトのアドレス（URL）のことで、「example.com」のような形式です。
-          </p>
-          <select
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            {...register('domainChoice')}
-          >
-            <option value="">選択してください</option>
-            {DOMAIN_CHOICES.map((choice) => (
-              <option key={choice} value={choice}>
-                {choice}
-              </option>
-            ))}
-          </select>
-          {watch('domainChoice') === '既存ドメインを使用' && (
-            <input
-              type="text"
-              className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              placeholder="既存ドメインがある場合は記入してください"
-              {...register('domainExisting')}
-            />
-          )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700">サーバーについて<span className="text-red-500 ml-0.5">*</span></label>
-          <p className="mt-1 text-xs text-slate-500">
-            サーバーとは？ウェブサイトのデータを保存して、インターネット上に公開するためのコンピューターのことです。
-          </p>
-          <select
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            {...register('serverChoice')}
-          >
-            <option value="">選択してください</option>
-            {SERVER_CHOICES.map((choice) => (
-              <option key={choice} value={choice}>
-                {choice}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700">SSL証明書の導入</label>
-          <p className="mt-1 text-xs text-slate-500">
-            SSL証明書とは？ウェブサイトの通信を暗号化して安全にするためのもので、URLが「https://」で始まります。
-          </p>
-          <select
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-base shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            {...register('sslChoice')}
-          >
-            <option value="">選択してください</option>
-            {SSL_CHOICES.map((choice) => (
-              <option key={choice} value={choice}>
-                {choice}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700">対応デバイス（複数選択可）</label>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {DEVICES_CHOICES.map((device) => {
-              const selectedDevices = watch('devicesSupported') ?? [];
-              const active = selectedDevices.includes(device);
-              return (
-                <button
-                  key={device}
-                  type="button"
-                  onClick={() => {
-                    const exists = selectedDevices.includes(device);
-                    const next = exists
-                      ? selectedDevices.filter((d) => d !== device)
-                      : [...selectedDevices, device];
-                    setValue('devicesSupported', next, { shouldDirty: true, shouldValidate: true });
-                  }}
-                  className={clsx(
-                    'rounded-lg border px-4 py-2 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
-                    active
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300',
-                  )}
-                >
-                  {device}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        </div>
-      </AccordionSection>
 
-      {/* 11. 保守・運用について */}
+      {/* 10. 保守・運用について */}
       <AccordionSection
         id="maintenance"
-        number={11}
+        number={10}
         title="保守・運用について"
         description="ウェブサイト公開後の継続的なサポートに関するご希望をお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('maintenance')}
@@ -1723,10 +1774,10 @@ export const BasicInfoStep = () => {
         </div>
       </AccordionSection>
 
-      {/* 12. プロジェクト進行・その他 */}
+      {/* 11. プロジェクト進行・その他 */}
       <AccordionSection
         id="project-management"
-        number={12}
+        number={11}
         title="プロジェクト進行・その他"
         description="プロジェクトの進行についてお聞かせください。該当しない項目は「該当なし」にチェックを入れてスキップできます。"
         isExpanded={expandedSections.has('project-management')}
