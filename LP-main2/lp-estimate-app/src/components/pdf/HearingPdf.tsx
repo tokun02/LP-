@@ -96,7 +96,7 @@ export const HearingPdfDocument = ({ values, generatedAt = new Date() }: Hearing
           <Text style={styles.subtitle}>作成日: {generatedAt.toLocaleDateString('ja-JP')}</Text>
           <Text style={styles.subtitle}>エンジニア向け資料（内部共有用）</Text>
           <Text style={[styles.subtitle, { fontSize: 9, color: '#94a3b8', marginTop: 4 }]}>
-            ※ 本ヒアリングシートは参考資料です。確定見積もりはヒアリング時に別途ご提示いたします。
+            ※ 本ヒアリングシートは参考資料です。確定見積もりはヒアリングをした後日にご提示いたします。
           </Text>
         </View>
 

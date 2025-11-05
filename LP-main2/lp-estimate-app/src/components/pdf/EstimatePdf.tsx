@@ -80,7 +80,7 @@ export const EstimatePdfDocument = ({ values, breakdown, generatedAt = new Date(
           <Text style={styles.heading}>Webサイト制作参考概算見積書（ドラフト）</Text>
           <Text style={styles.subtitle}>作成日: {generatedAt.toLocaleDateString()}</Text>
           <Text style={[styles.subtitle, { fontSize: 10, color: '#64748b', marginTop: 4 }]}>
-            ※ 本見積もりは参考程度の概算です。確定見積もりはヒアリング時に別途ご提示いたします。
+            ※ 本見積もりは参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
           </Text>
         </View>
 

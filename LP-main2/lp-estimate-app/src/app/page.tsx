@@ -43,7 +43,7 @@ export default function HomePage() {
                 セールスが案件化までに必要とする情報を取りこぼさず、即日提案に繋げることを目指しました。
                 <br />
                 <span className="text-sm font-medium text-slate-600 mt-2 block">
-                  ※ 本アプリで算出される見積もりは参考程度の概算です。確定見積もりはヒアリング時に別途ご提示いたします。
+                  ※ 本アプリで算出される見積もりは参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
                 </span>
               </p>
               <div className="mt-4 grid grid-cols-1 gap-2.5 w-full sm:max-w-none sm:flex sm:flex-row sm:gap-3">
@@ -119,7 +119,7 @@ export default function HomePage() {
               必要な情報を入力すると、参考程度の概算見積もりとPDFドラフトを自動生成します。
               <br />
               <span className="text-sm font-medium text-slate-600 mt-1 block">
-                ※ 本シミュレーターで算出される見積もりは参考程度の概算です。確定見積もりはヒアリング時に別途ご提示いたします。
+                ※ 本シミュレーターで算出される見積もりは参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
               </span>
             </p>
           </header>

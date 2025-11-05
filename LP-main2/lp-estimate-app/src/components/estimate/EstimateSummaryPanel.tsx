@@ -40,7 +40,7 @@ export const EstimateSummaryPanel = ({ breakdown, currentStep }: EstimateSummary
         <h3 className="title-compact text-slate-900">参考概算見積</h3>
         <p className="hint-compact mt-0.5">入力内容に応じてリアルタイムに更新されます。</p>
         <p className="hint-compact mt-1 text-xs text-slate-500">
-          ※ 参考程度の概算です。確定見積もりはヒアリング時に別途ご提示いたします。
+          ※ 参考程度の概算です。確定見積もりはヒアリングをした後日にご提示いたします。
         </p>
       </div>
       <div className="stack-compact text-[13px] text-slate-600">
