@@ -381,7 +381,7 @@ export const WIREFRAME_TYPE_LABELS: Record<WireframeType, string> = {
 };
 
 export const WIREFRAME_TYPE_DESCRIPTIONS: Record<WireframeType, string> = {
-  'template': '標準的なテンプレートから選択。コストと制作期間を抑えられます。',
+  'template': 'コストと制作期間を抑えられます',
   'semi-custom': 'テンプレートをベースに、ご要望に合わせてカスタマイズします。',
   'full-custom': '完全オリジナルのワイヤーフレームから作成します。',
 };
