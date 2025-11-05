@@ -1,9 +1,10 @@
 "use client";
 
-import type { EstimateBreakdown } from '@/types/estimate';
+import type { EstimateBreakdown, FormSection } from '@/types/estimate';
 
 type EstimateSummaryPanelProps = {
   breakdown: EstimateBreakdown;
+  currentStep?: FormSection;
 };
 
 const formatCurrency = (value?: number | null) => {
@@ -11,12 +12,27 @@ const formatCurrency = (value?: number | null) => {
   return numericValue.toLocaleString();
 };
 
-export const EstimateSummaryPanel = ({ breakdown }: EstimateSummaryPanelProps) => {
-  const subtotal = formatCurrency(breakdown?.subtotal);
+export const EstimateSummaryPanel = ({ breakdown, currentStep }: EstimateSummaryPanelProps) => {
+  // 「構成・デザイン」ステップの場合は、オプション関連のアイテムを除外
+  const allItems = Array.isArray(breakdown?.items) ? breakdown.items : [];
+  const filteredItems = currentStep === 'structure' 
+    ? allItems.filter((item) => item.category !== 'オプション')
+    : allItems;
+  
+  // フィルタリング後のアイテムで再計算
+  const filteredSubtotal = filteredItems.reduce((acc, item) => acc + item.total, 0);
+  const filteredTax = Math.round(filteredSubtotal * (breakdown?.taxRate ?? 0));
+  const filteredTotalWithTax = filteredSubtotal + filteredTax;
+  const filteredTotalWithoutTax = filteredSubtotal;
+  const filteredDisplayTotal = breakdown?.displayTotal === breakdown?.totalWithTax 
+    ? filteredTotalWithTax 
+    : filteredTotalWithoutTax;
+
+  const subtotal = formatCurrency(filteredSubtotal);
   const taxRatePercent = Math.round((breakdown?.taxRate ?? 0) * 100);
-  const tax = formatCurrency(breakdown?.tax);
-  const displayTotal = formatCurrency(breakdown?.displayTotal);
-  const items = Array.isArray(breakdown?.items) ? breakdown.items : [];
+  const tax = formatCurrency(filteredTax);
+  const displayTotal = formatCurrency(filteredDisplayTotal);
+  const items = filteredItems;
 
   return (
     <aside className="sticky top-24 space-y-3 rounded-lg border border-slate-200 bg-white card-ultra sm:card-compact shadow-lg shadow-blue-100/30">

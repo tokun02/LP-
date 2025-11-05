@@ -408,7 +408,7 @@ export const EstimateWizard = () => {
             <div className="space-y-8">
               <SummaryStep breakdown={breakdown} onReset={handleReset} onBack={() => setStep('options')} />
               <div className="lg:hidden">
-                <EstimateSummaryPanel breakdown={breakdown} />
+                <EstimateSummaryPanel breakdown={breakdown} currentStep={currentStep} />
               </div>
             </div>
           ) : (
@@ -422,7 +422,7 @@ export const EstimateWizard = () => {
               <ActiveComponent />
               {currentStep !== 'basic' && (
                 <div className="lg:hidden">
-                  <EstimateSummaryPanel breakdown={breakdown} />
+                  <EstimateSummaryPanel breakdown={breakdown} currentStep={currentStep} />
                 </div>
               )}
               <div className="flex flex-col gap-ultra pt-3 sm:flex-row sm:justify-between sm:gap-3">
@@ -462,7 +462,7 @@ export const EstimateWizard = () => {
         </FormProvider>
         {currentStep !== 'basic' && (
           <div className="hidden lg:block">
-            <EstimateSummaryPanel breakdown={breakdown} />
+            <EstimateSummaryPanel breakdown={breakdown} currentStep={currentStep} />
           </div>
         )}
       </div>
