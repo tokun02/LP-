@@ -41,7 +41,7 @@ const defaultValuesRaw = {
 const parseResult = estimateSchema.safeParse(defaultValuesRaw);
 export const defaultFormValues: EstimateFormValues = parseResult.success
   ? parseResult.data
-  : (defaultValuesRaw as EstimateFormValues); // 型アサーションでフォールバック
+  : (defaultValuesRaw as unknown as EstimateFormValues); // unknown経由で型アサーション（安全なフォールバック）
 
 const hasChanged = (
   prev: EstimateFormValues,

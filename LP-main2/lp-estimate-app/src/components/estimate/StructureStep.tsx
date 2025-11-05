@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { basePackages, options as tariffOptions } from '@/data/tariffs';
 import type { EstimateFormValues } from '@/types/estimate';
 import { FormError } from '@/components/ui/form-error';
-import { getWireframeTemplatesByType, type WireframeTemplate } from '@/data/form-options';
+import { getWireframeTemplatesByType, type WireframeType } from '@/data/form-options';
 import { WireframePreview } from '@/components/ui/wireframe-preview';
 import clsx from 'clsx';
 
@@ -26,8 +26,13 @@ export const StructureStep = () => {
   const wireframeTemplateId = watch('wireframeTemplateId');
 
   // 選択されたワイヤーフレームタイプに応じたテンプレート一覧を取得
+  // 型ガード: wireframeTypeがWireframeType型であることを確認
+  const isWireframeType = (x: string | undefined): x is WireframeType => {
+    return !!x && (x === 'template' || x === 'semi-custom' || x === 'full-custom');
+  };
+
   const availableTemplates = useMemo(() => {
-    if (!wireframeType) return [];
+    if (!isWireframeType(wireframeType)) return [];
     return getWireframeTemplatesByType(wireframeType);
   }, [wireframeType]);
 

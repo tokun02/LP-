@@ -207,9 +207,7 @@ export const estimateSchema = z.object({
   // ここから追加の選択群（すべて任意）
   industry: isDevelopment
     ? z.enum(INDUSTRY_OPTIONS as unknown as [string, ...string[]]).optional()
-    : z.enum(INDUSTRY_OPTIONS as unknown as [string, ...string[]], {
-        required_error: '業種・業態を選択してください。',
-      }),
+    : z.enum(INDUSTRY_OPTIONS as unknown as [string, ...string[]]),
   employeeSize: z.enum(EMPLOYEE_SIZE_OPTIONS as unknown as [string, ...string[]]).optional(),
   projectPurposes: z
     .array(z.enum(PROJECT_PURPOSE_OPTIONS as unknown as [string, ...string[]]))
@@ -300,6 +298,7 @@ export const estimateSchema = z.object({
     ? z.array(z.string()).optional()
     : z.array(z.string()).min(1, { message: 'メインターゲットの年齢層を1つ以上選択してください。' }),
   targetCharacteristics: z.string().optional(),
+  brandImage: z.string().optional(), // ブランドを一言で
   competitorUrl: z.string().url().optional().or(z.literal('')),
   competitorGoodPoints: z.array(z.string()).optional(),
   competitorGoodDetails: z.string().optional(),

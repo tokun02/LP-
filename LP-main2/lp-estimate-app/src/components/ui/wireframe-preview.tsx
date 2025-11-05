@@ -3,13 +3,13 @@
 type WireframePreviewProps = {
   type: 'standard-1' | 'standard-2' | 'standard-3' | 'semi-custom' | 'full-custom';
   templateId?: string; // テンプレートID（詳細なワイヤーフレーム表示用）
-  previewUrl?: string;
+  previewUrl?: string; // プレビューURL（将来のデモページ用、現在は未使用）
 };
 
 // ワイヤーフレームのレイアウトを視覚的に表現するコンポーネント
 // パフォーマンス最適化: 常にSVGで表示（iframeは使用しない）
 // 詳細はクリック時に新規タブで表示されるため、初期読み込み時の負荷はゼロ
-export const WireframePreview = ({ type, templateId, previewUrl }: WireframePreviewProps) => {
+export const WireframePreview = ({ type, templateId }: WireframePreviewProps) => {
   // SVGでワイヤーフレームのレイアウトを表現
   // 注: 実際のデモサイトはクリック時に新規タブで開かれるため、ここでは表示しない
   return (
