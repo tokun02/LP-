@@ -1,6 +1,6 @@
 [build]
   # アプリがあるサブディレクトリを相対パスで指定
-  base = "LP-main3/LP-main2/lp-estimate-app"
+  base = "LP-main2/lp-estimate-app"
   # npm ci を使用して依存関係をクリーンインストール
   command = "npm ci && npm run build"
   # Next.js on Netlify はプラグインが publish をよしなに扱うので指定なしでも可
@@ -17,14 +17,22 @@
 # 環境変数の設定（本番環境用）
 # 注意: 実際の環境変数はNetlifyダッシュボードで設定してください
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
+
+# デプロイコンテキスト設定（複数ブランチ対応）
+# Production: main3ブランチ（本番環境）
+[context.production]
+  command = "npm ci && npm run build"
+
+# Branch deploys: developブランチ（開発環境）
+[context.develop]
+  command = "npm ci && npm run build"
+
+# Branch deploys: その他のブランチ（プレビュー環境）
+[context.branch-deploy]
+  command = "npm ci && npm run build"
 
 # 注意: @netlify/plugin-nextjs が自動的にリダイレクトを設定します
 # 上記のリダイレクト設定は不要です（プラグインが処理します）
-
-# GitHubリポジトリの設定（オプション）
-# [git]
-#   url = "https://github.com/tokun02/LP-.git"
-#   branch = "main3"
 
 
