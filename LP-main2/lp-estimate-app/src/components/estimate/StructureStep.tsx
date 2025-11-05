@@ -231,9 +231,14 @@ export const StructureStep = () => {
                   )}
                 </div>
                 <p className="mt-3 text-xs leading-relaxed text-slate-600">{option.description}</p>
+                {option.id === 'semi-custom' && (
+                  <p className="mt-3 text-[10px] font-medium text-indigo-600">
+                    ※ セミオーダーの場合、追加費用が発生する場合があります
+                  </p>
+                )}
                 {option.id === 'full-custom' && (
                   <p className="mt-3 text-[10px] font-medium text-indigo-600">
-                    ※ フルオーダーの場合、追加費用が発生する場合があります
+                    ※ フルオーダーの場合、追加費用が発生します
                   </p>
                 )}
               </button>
