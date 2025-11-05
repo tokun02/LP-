@@ -273,19 +273,27 @@ export const StructureStep = () => {
                         <p className="mt-3 text-[10px] text-slate-400">想定制作期間: {template.estimatedTime}</p>
                       )}
                       {template.previewUrl && (
-                        <button
-                          type="button"
+                        <div
+                          role="button"
+                          tabIndex={0}
                           onClick={(e) => {
                             e.stopPropagation();
                             window.open(template.previewUrl, '_blank', 'noopener,noreferrer');
                           }}
-                          className="mt-3 inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100 hover:text-blue-700"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.open(template.previewUrl, '_blank', 'noopener,noreferrer');
+                            }
+                          }}
+                          className="mt-3 inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100 hover:text-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                         >
                           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                           実装例を別タブで見る
-                        </button>
+                        </div>
                       )}
                     </div>
                   </button>
@@ -336,19 +344,27 @@ export const StructureStep = () => {
                         {WIREFRAME_TYPE_DESCRIPTIONS[type]}
                       </p>
                       {WIREFRAME_DEMO_URLS[type] && (
-                        <button
-                          type="button"
+                        <div
+                          role="button"
+                          tabIndex={0}
                           onClick={(e) => {
                             e.stopPropagation();
                             window.open(WIREFRAME_DEMO_URLS[type], '_blank', 'noopener,noreferrer');
                           }}
-                          className="mt-3 inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-3 py-2 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.open(WIREFRAME_DEMO_URLS[type], '_blank', 'noopener,noreferrer');
+                            }
+                          }}
+                          className="mt-3 inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-3 py-2 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
                         >
                           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                           実装例を別タブで見る
-                        </button>
+                        </div>
                       )}
                       {type === 'full-custom' && (
                         <p className="mt-3 text-[10px] font-medium text-indigo-600">
