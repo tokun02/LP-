@@ -135,6 +135,36 @@ export const EstimateWizard = () => {
     return () => subscription.unsubscribe();
   }, [formMethods, updateValues]);
 
+  // ステップ変更時に見積シミュレーターのヘッダー位置までスクロール
+  useEffect(() => {
+    // 少し遅延を入れて、DOMが更新された後にスクロール
+    const timer = setTimeout(() => {
+      const estimateSection = document.getElementById('estimate');
+      if (estimateSection) {
+        // ヘッダーの位置を計算（header要素の上端）
+        const header = estimateSection.querySelector('header');
+        if (header) {
+          const headerRect = header.getBoundingClientRect();
+          const scrollPosition = window.scrollY + headerRect.top - 20; // 20pxの余白
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth',
+          });
+        } else {
+          // headerがない場合はセクションの先頭まで
+          const sectionRect = estimateSection.getBoundingClientRect();
+          const scrollPosition = window.scrollY + sectionRect.top - 20;
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth',
+          });
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [currentStep]);
+
   const currentIndex = useMemo(
     () => Math.max(0, steps.findIndex((step) => step.id === currentStep)),
     [currentStep],
