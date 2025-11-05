@@ -196,7 +196,7 @@ export const StructureStep = () => {
         </header>
         <div className="grid gap-4 md:grid-cols-3">
           {([
-            { id: 'template', label: 'テンプレート', description: '標準的なテンプレートから選択。コストと制作期間を抑えられます。' },
+            { id: 'template', label: 'テンプレート', description: 'コストと制作期間を抑えられます' },
             { id: 'semi-custom', label: 'セミオーダー', description: 'テンプレートをベースに、ご要望に合わせてカスタマイズします。' },
             { id: 'full-custom', label: 'フルオーダー', description: '完全オリジナルのワイヤーフレームから作成します。' },
           ] as const).map((option) => {
