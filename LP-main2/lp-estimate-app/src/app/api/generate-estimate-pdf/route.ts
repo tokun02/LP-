@@ -77,8 +77,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // PDFをBlobとして返す
-    return new NextResponse(pdfBuffer, {
+    // BufferをUint8Arrayに変換してNextResponseに渡す（BodyInit型の要件を満たすため）
+    const body =
+      pdfBuffer instanceof Uint8Array
+        ? pdfBuffer
+        : pdfBuffer instanceof ArrayBuffer
+        ? new Uint8Array(pdfBuffer)
+        : new Uint8Array(pdfBuffer); // Node BufferをUint8Arrayに変換
+
+    // PDFを返す
+    return new NextResponse(body, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
