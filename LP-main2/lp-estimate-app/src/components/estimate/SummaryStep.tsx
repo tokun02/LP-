@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import clsx from 'clsx';
 
@@ -133,15 +133,27 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
         }
       }
       
-      // 動的インポートで@react-pdf/rendererをロード
-      const { pdf } = await import('@react-pdf/renderer');
-      const { EstimatePdfDocument } = await import('@/components/pdf/EstimatePdf');
+      // サーバー側のAPIルートを使用してPDFを生成（ブラウザ側の互換性問題を回避）
+      console.log('サーバー側でPDFを生成中...');
       
-      // PDFを生成してダウンロード
-      console.log('PDF生成を開始します...');
-      const doc = <EstimatePdfDocument values={values} breakdown={breakdown} />;
-      const asPdf = pdf(doc);
-      const blob = await asPdf.toBlob();
+      // PDF生成用のAPIエンドポイントを呼び出し
+      const pdfResponse = await fetch('/api/generate-estimate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          values,
+          breakdown,
+        }),
+      });
+
+      if (!pdfResponse.ok) {
+        const errorData = await pdfResponse.json().catch(() => ({ message: 'PDF生成に失敗しました' }));
+        throw new Error(errorData.message || `PDF生成エラー: ${pdfResponse.status}`);
+      }
+
+      const blob = await pdfResponse.blob();
       console.log('PDF生成成功、サイズ:', blob.size, 'bytes');
       
       const url = URL.createObjectURL(blob);
