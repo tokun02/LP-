@@ -78,16 +78,27 @@ export async function POST(request: NextRequest) {
     }
 
     // BufferをUint8Arrayに変換してNextResponseに渡す（BodyInit型の要件を満たすため）
-    // 既にbody変数が使用されているため、responseBodyという名前に変更
-    const responseBody =
-      pdfBuffer instanceof Uint8Array
-        ? pdfBuffer
-        : pdfBuffer instanceof ArrayBuffer
-        ? new Uint8Array(pdfBuffer)
-        : new Uint8Array(pdfBuffer); // Node BufferをUint8Arrayに変換
+    // renderToBufferは常にBufferを返すが、型安全性を確保するため明示的なチェックを行う
+    let responseBody: Uint8Array;
 
-    // PDFを返す
-    return new NextResponse(responseBody, {
+    if (Buffer.isBuffer(pdfBuffer)) {
+      // Node Buffer -> Uint8Array（最も一般的なケース）
+      responseBody = new Uint8Array(pdfBuffer);
+    } else if (ArrayBuffer.isView(pdfBuffer)) {
+      // TypedArrayまたはDataViewの場合
+      const view = pdfBuffer as ArrayBufferView;
+      responseBody = new Uint8Array(view.buffer, view.byteOffset, view.byteLength);
+    } else if ((pdfBuffer as unknown) instanceof ArrayBuffer) {
+      // ArrayBufferの場合（型アサーションを使用してinstanceofチェックを許可）
+      responseBody = new Uint8Array(pdfBuffer as ArrayBuffer);
+    } else {
+      // フォールバック（他の型の場合）- 直接Uint8Arrayに変換
+      responseBody = new Uint8Array(pdfBuffer as ArrayLike<number>);
+    }
+
+    // PDFを返す（Uint8ArrayはBodyInitの有効な型の一つ）
+    // 型アサーションを使用してBodyInitとして明示的に指定
+    return new NextResponse(responseBody as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
