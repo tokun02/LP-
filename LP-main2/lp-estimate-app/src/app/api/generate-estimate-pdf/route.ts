@@ -222,13 +222,28 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ PDF生成完了、総所要時間:', debugInfo.totalDuration, 'ms');
 
+    // ファイル名を生成（日本語対応のためRFC 5987形式でエンコード）
+    const projectName = (values.projectName || '案件').replace(/\s+/g, '_');
+    const fileName = `Webサイト見積_${projectName}.pdf`;
+    
+    // ASCII互換のファイル名（フォールバック用、古いブラウザ対応）
+    const asciiFileName = `estimate_${projectName.replace(/[^\x00-\x7F]/g, '_')}.pdf`;
+    
+    // 日本語ファイル名をRFC 5987形式（UTF-8エンコード）でエンコード
+    // encodeURIComponentは既にUTF-8エンコードを行うため、そのまま使用可能
+    const encodedFileName = encodeURIComponent(fileName);
+    
+    // Content-Dispositionヘッダー: ASCII互換版とUTF-8エンコード版の両方を提供
+    // RFC 5987形式: filename*=UTF-8''encoded-value
+    const contentDisposition = `attachment; filename="${asciiFileName}"; filename*=UTF-8''${encodedFileName}`;
+
     // PDFを返す（Uint8ArrayはBodyInitの有効な型の一つ）
     // 型アサーションを使用してBodyInitとして明示的に指定
     return new NextResponse(responseBody as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Webサイト見積_${(values.projectName || '案件').replace(/\s+/g, '_')}.pdf"`,
+        'Content-Disposition': contentDisposition,
       },
     });
   } catch (error) {
