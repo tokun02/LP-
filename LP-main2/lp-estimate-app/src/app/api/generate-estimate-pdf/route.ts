@@ -6,44 +6,81 @@ import fs from 'fs';
 import { createEstimateDocument } from '@/components/pdf/EstimatePdf';
 import type { EstimateBreakdown, EstimateFormValues } from '@/types/estimate';
 
-// 日本語フォントを登録（サーバー側で実行）
-const registerFonts = () => {
-  try {
-    const fontsDir = path.join(process.cwd(), 'public', 'fonts', 'static');
-    const regularFont = path.join(fontsDir, 'NotoSansJP-Regular.ttf');
-    const mediumFont = path.join(fontsDir, 'NotoSansJP-Medium.ttf');
-    const boldFont = path.join(fontsDir, 'NotoSansJP-Bold.ttf');
+// フォント登録状態を管理（モジュールレベルで一度だけ実行）
+let fontsRegistered = false;
 
-    // フォントファイルが存在するか確認
-    if (fs.existsSync(regularFont) && fs.existsSync(mediumFont) && fs.existsSync(boldFont)) {
-      Font.register({
-        family: 'NotoSansJP',
-        fonts: [
-          {
-            src: regularFont,
-            fontWeight: 400,
-          },
-          {
-            src: mediumFont,
-            fontWeight: 500,
-          },
-          {
-            src: boldFont,
-            fontWeight: 700,
-          },
-        ],
-      });
-    } else {
-      console.warn('フォントファイルが見つかりません。デフォルトフォントを使用します。');
+// 日本語フォントを登録（サーバー側で実行）
+// Netlify環境でも動作するよう、複数のパスパターンを試行
+const registerFonts = () => {
+  // 既に登録済みの場合はスキップ
+  if (fontsRegistered) {
+    return true;
+  }
+
+  try {
+    // 複数のパスパターンを試行（Netlify環境に対応）
+    const possiblePaths = [
+      path.join(process.cwd(), 'public', 'fonts', 'static'),
+      path.join(process.cwd(), 'LP-main2', 'lp-estimate-app', 'public', 'fonts', 'static'),
+      path.join(process.cwd(), '.next', 'static', 'fonts'),
+    ];
+
+    let fontsFound = false;
+    for (const fontsDir of possiblePaths) {
+      const regularFont = path.join(fontsDir, 'NotoSansJP-Regular.ttf');
+      const mediumFont = path.join(fontsDir, 'NotoSansJP-Medium.ttf');
+      const boldFont = path.join(fontsDir, 'NotoSansJP-Bold.ttf');
+
+      if (fs.existsSync(regularFont) && fs.existsSync(mediumFont) && fs.existsSync(boldFont)) {
+        try {
+          Font.register({
+            family: 'NotoSansJP',
+            fonts: [
+              {
+                src: regularFont,
+                fontWeight: 400,
+              },
+              {
+                src: mediumFont,
+                fontWeight: 500,
+              },
+              {
+                src: boldFont,
+                fontWeight: 700,
+              },
+            ],
+          });
+          fontsFound = true;
+          fontsRegistered = true;
+          console.log('✅ フォント登録成功:', fontsDir);
+          break;
+        } catch (registerError) {
+          // 既に登録されている可能性がある場合は成功とみなす
+          if (registerError instanceof Error && registerError.message.includes('already registered')) {
+            fontsFound = true;
+            fontsRegistered = true;
+            console.log('✅ フォントは既に登録されています');
+            break;
+          }
+          console.warn('フォント登録エラー（このパス）:', fontsDir, registerError);
+        }
+      }
     }
+
+    if (!fontsFound) {
+      console.warn('⚠️ フォントファイルが見つかりません。デフォルトフォントを使用します。');
+      // フォントが見つからなくてもPDF生成は続行可能（デフォルトフォントで動作）
+      fontsRegistered = true; // 再試行を防ぐ
+    }
+
+    return fontsFound;
   } catch (error) {
     // フォント登録エラーは無視（既に登録されている可能性がある）
-    console.warn('Font registration warning:', error);
+    console.warn('⚠️ フォント登録エラー（無視して続行）:', error);
+    fontsRegistered = true; // 再試行を防ぐ
+    return false;
   }
 };
-
-// フォントを登録
-registerFonts();
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +96,9 @@ export async function POST(request: NextRequest) {
 
     console.log('📄 PDF生成開始...');
 
+    // フォントを登録（各リクエストごとに実行、ただし登録済みの場合はスキップ）
+    registerFonts();
+
     // 見積PDFを生成
     let pdfBuffer: Buffer;
     try {
@@ -66,13 +106,30 @@ export async function POST(request: NextRequest) {
         values,
         breakdown,
       });
+      
+      console.log('PDFドキュメント作成完了、レンダリング開始...');
       pdfBuffer = await renderToBuffer(pdfDoc);
       console.log('✅ PDF生成成功、サイズ:', pdfBuffer.length, 'bytes');
     } catch (error) {
       console.error('❌ PDF生成エラー:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      // より詳細なエラー情報をログに出力
+      if (error instanceof Error) {
+        console.error('エラー詳細:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+        });
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // ユーザー向けのエラーメッセージを返す
       return NextResponse.json(
-        { error: `PDFの生成に失敗しました: ${errorMessage}` },
+        { 
+          error: `PDFの生成に失敗しました: ${errorMessage}`,
+          details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : undefined) : undefined,
+        },
         { status: 500 },
       );
     }
