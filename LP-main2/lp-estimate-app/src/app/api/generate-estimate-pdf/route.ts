@@ -78,7 +78,8 @@ export async function POST(request: NextRequest) {
     }
 
     // BufferをUint8Arrayに変換してNextResponseに渡す（BodyInit型の要件を満たすため）
-    const body =
+    // 既にbody変数が使用されているため、responseBodyという名前に変更
+    const responseBody =
       pdfBuffer instanceof Uint8Array
         ? pdfBuffer
         : pdfBuffer instanceof ArrayBuffer
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
         : new Uint8Array(pdfBuffer); // Node BufferをUint8Arrayに変換
 
     // PDFを返す
-    return new NextResponse(body, {
+    return new NextResponse(responseBody, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
