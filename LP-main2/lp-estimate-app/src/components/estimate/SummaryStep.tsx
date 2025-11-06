@@ -38,38 +38,61 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
   const values = getValues();
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
+  // フォント登録状態を管理
+  const [fontRegistered, setFontRegistered] = useState(false);
+  const [fontError, setFontError] = useState<string | null>(null);
+
   // クライアント側でフォントを登録（ブラウザ環境でのみ実行）
   useEffect(() => {
     // SSR中は実行しない
     if (typeof window === 'undefined') return;
     
-    // 動的インポートで@react-pdf/rendererをロード
-    import('@react-pdf/renderer').then(({ Font }) => {
+    // フォント登録関数
+    const registerFonts = async () => {
       try {
-        Font.register({
-          family: 'NotoSansJP',
-          fonts: [
-            {
-              src: '/fonts/static/NotoSansJP-Regular.ttf',
-              fontWeight: 400,
-            },
-            {
-              src: '/fonts/static/NotoSansJP-Medium.ttf',
-              fontWeight: 500,
-            },
-            {
-              src: '/fonts/static/NotoSansJP-Bold.ttf',
-              fontWeight: 700,
-            },
-          ],
-        });
-      } catch (error) {
-        // フォント登録エラーは無視（既に登録されている可能性がある）
-        console.warn('Font registration warning:', error);
+        const { Font } = await import('@react-pdf/renderer');
+        
+        // フォントが既に登録されているか確認
+        try {
+          Font.register({
+            family: 'NotoSansJP',
+            fonts: [
+              {
+                src: '/fonts/static/NotoSansJP-Regular.ttf',
+                fontWeight: 400,
+              },
+              {
+                src: '/fonts/static/NotoSansJP-Medium.ttf',
+                fontWeight: 500,
+              },
+              {
+                src: '/fonts/static/NotoSansJP-Bold.ttf',
+                fontWeight: 700,
+              },
+            ],
+          });
+          setFontRegistered(true);
+          setFontError(null);
+          console.log('✅ フォント登録成功');
+        } catch (registerError: any) {
+          // 既に登録されている場合はエラーを無視
+          if (registerError?.message?.includes('already registered')) {
+            setFontRegistered(true);
+            setFontError(null);
+            console.log('✅ フォントは既に登録されています');
+          } else {
+            throw registerError;
+          }
+        }
+      } catch (error: any) {
+        console.error('❌ フォント登録エラー:', error);
+        setFontError(error?.message || 'フォントの登録に失敗しました');
+        // フォント登録に失敗してもPDF生成は試行（デフォルトフォントで動作する可能性がある）
+        setFontRegistered(false);
       }
-    }).catch((error) => {
-      console.warn('Failed to load @react-pdf/renderer:', error);
-    });
+    };
+
+    registerFonts();
   }, []);
 
   const pdfFileName = useMemo(
@@ -85,14 +108,45 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
     try {
       setIsSendingEmail(true);
       
+      // フォントが登録されていない場合は再試行
+      if (!fontRegistered) {
+        console.log('フォント登録を再試行します...');
+        try {
+          const { Font } = await import('@react-pdf/renderer');
+          Font.register({
+            family: 'NotoSansJP',
+            fonts: [
+              {
+                src: '/fonts/static/NotoSansJP-Regular.ttf',
+                fontWeight: 400,
+              },
+              {
+                src: '/fonts/static/NotoSansJP-Medium.ttf',
+                fontWeight: 500,
+              },
+              {
+                src: '/fonts/static/NotoSansJP-Bold.ttf',
+                fontWeight: 700,
+              },
+            ],
+          });
+          setFontRegistered(true);
+        } catch (fontError) {
+          console.warn('フォント登録の再試行に失敗しましたが、PDF生成を続行します:', fontError);
+        }
+      }
+      
       // 動的インポートで@react-pdf/rendererをロード
       const { pdf } = await import('@react-pdf/renderer');
       const { EstimatePdfDocument } = await import('@/components/pdf/EstimatePdf');
       
       // PDFを生成してダウンロード
+      console.log('PDF生成を開始します...');
       const doc = <EstimatePdfDocument values={values} breakdown={breakdown} />;
       const asPdf = pdf(doc);
       const blob = await asPdf.toBlob();
+      console.log('PDF生成成功、サイズ:', blob.size, 'bytes');
+      
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -101,6 +155,7 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      console.log('✅ PDFダウンロード完了');
 
       // メール送信（非同期で実行、エラーが発生してもPDFダウンロードは完了）
       try {
@@ -129,9 +184,27 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
         console.error('❌ メール送信API呼び出しエラー:', fetchError);
         // エラーが発生してもユーザーに通知しない（PDFダウンロードは成功しているため）
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ PDF生成エラー:', error);
-      alert('PDFの生成に失敗しました。ページを再読み込みして再度お試しください。');
+      console.error('エラー詳細:', {
+        message: error?.message,
+        stack: error?.stack,
+        name: error?.name,
+      });
+      
+      // より詳細なエラーメッセージを表示
+      const errorMessage = error?.message || '不明なエラー';
+      let userMessage = 'PDFの生成に失敗しました。';
+      
+      if (errorMessage.includes('font') || errorMessage.includes('フォント')) {
+        userMessage = 'PDFの生成に失敗しました（フォントの読み込みエラー）。ページを再読み込みして再度お試しください。';
+      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        userMessage = 'PDFの生成に失敗しました（ネットワークエラー）。インターネット接続を確認して再度お試しください。';
+      } else {
+        userMessage = `PDFの生成に失敗しました。エラー: ${errorMessage}`;
+      }
+      
+      alert(userMessage);
     } finally {
       setIsSendingEmail(false);
     }

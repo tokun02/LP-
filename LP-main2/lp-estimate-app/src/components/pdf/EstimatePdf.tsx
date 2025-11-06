@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 32,
     fontSize: 11,
-    fontFamily: 'NotoSansJP',
+    fontFamily: 'NotoSansJP', // フォントが登録されていない場合はデフォルトフォントが使用される
     color: '#1f2937',
   },
   heading: {
