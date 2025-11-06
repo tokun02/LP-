@@ -40,7 +40,6 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
 
   // フォント登録状態を管理
   const [fontRegistered, setFontRegistered] = useState(false);
-  const [fontError, setFontError] = useState<string | null>(null);
 
   // クライアント側でフォントを登録（ブラウザ環境でのみ実行）
   useEffect(() => {
@@ -72,21 +71,19 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
             ],
           });
           setFontRegistered(true);
-          setFontError(null);
           console.log('✅ フォント登録成功');
-        } catch (registerError: any) {
+        } catch (registerError: unknown) {
           // 既に登録されている場合はエラーを無視
-          if (registerError?.message?.includes('already registered')) {
+          const errorMessage = registerError instanceof Error ? registerError.message : String(registerError);
+          if (errorMessage.includes('already registered')) {
             setFontRegistered(true);
-            setFontError(null);
             console.log('✅ フォントは既に登録されています');
           } else {
             throw registerError;
           }
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('❌ フォント登録エラー:', error);
-        setFontError(error?.message || 'フォントの登録に失敗しました');
         // フォント登録に失敗してもPDF生成は試行（デフォルトフォントで動作する可能性がある）
         setFontRegistered(false);
       }
@@ -184,16 +181,21 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
         console.error('❌ メール送信API呼び出しエラー:', fetchError);
         // エラーが発生してもユーザーに通知しない（PDFダウンロードは成功しているため）
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ PDF生成エラー:', error);
+      
+      // エラーオブジェクトから情報を取得
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      const errorName = error instanceof Error ? error.name : undefined;
+      
       console.error('エラー詳細:', {
-        message: error?.message,
-        stack: error?.stack,
-        name: error?.name,
+        message: errorMessage,
+        stack: errorStack,
+        name: errorName,
       });
       
       // より詳細なエラーメッセージを表示
-      const errorMessage = error?.message || '不明なエラー';
       let userMessage = 'PDFの生成に失敗しました。';
       
       if (errorMessage.includes('font') || errorMessage.includes('フォント')) {
