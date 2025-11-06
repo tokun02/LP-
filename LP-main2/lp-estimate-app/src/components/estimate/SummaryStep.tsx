@@ -149,8 +149,25 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
       });
 
       if (!pdfResponse.ok) {
-        const errorData = await pdfResponse.json().catch(() => ({ message: 'PDF生成に失敗しました' }));
-        throw new Error(errorData.message || `PDF生成エラー: ${pdfResponse.status}`);
+        let errorData: { error?: string; debug?: unknown; details?: string };
+        try {
+          errorData = await pdfResponse.json();
+        } catch {
+          errorData = { error: `PDF生成に失敗しました（HTTP ${pdfResponse.status}）` };
+        }
+        
+        // デバッグ情報がある場合はログに出力
+        if (errorData.debug) {
+          console.error('📊 PDF生成デバッグ情報:', errorData.debug);
+        }
+        
+        // 詳細なエラー情報がある場合はログに出力
+        if (errorData.details) {
+          console.error('📋 エラー詳細:', errorData.details);
+        }
+        
+        const errorMessage = errorData.error || `PDF生成エラー: ${pdfResponse.status}`;
+        throw new Error(errorMessage);
       }
 
       const blob = await pdfResponse.blob();
