@@ -93,7 +93,7 @@ const registerFonts = () => {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
-  let debugInfo: Record<string, unknown> = {
+  const debugInfo: Record<string, unknown> = {
     step: 'initialization',
     timestamp: new Date().toISOString(),
   };
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
       pdfBuffer = await Promise.race([renderPromise, timeoutPromise]);
       
       debugInfo.renderEndTime = Date.now();
-      debugInfo.renderDuration = debugInfo.renderEndTime - (debugInfo.renderStartTime as number);
+      debugInfo.renderDuration = (debugInfo.renderEndTime as number) - (debugInfo.renderStartTime as number);
       debugInfo.step = 'rendering_complete';
       debugInfo.pdfSize = pdfBuffer.length;
       
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
       debugInfo.step = 'error';
       debugInfo.errorOccurred = true;
       debugInfo.errorTime = Date.now();
-      debugInfo.totalDuration = debugInfo.errorTime - startTime;
+      debugInfo.totalDuration = (debugInfo.errorTime as number) - startTime;
       
       console.error('❌ PDF生成エラー:', error);
       
