@@ -6,7 +6,7 @@ import { estimateSchema } from '@/validation/estimate';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const STORAGE_KEY = 'web-estimate-app:v1';
+const STORAGE_KEY = 'web-estimate-app:v2'; // v2: selectedOptionsの初期値を空配列に変更
 
 const defaultSitePurpose = SITE_PURPOSE_OPTIONS[0];
 const defaultPackage = basePackages.find((pkg) => pkg.code === defaultSitePurpose.value) ?? basePackages[0];
@@ -30,7 +30,7 @@ const defaultValuesRaw = {
   designIntensity: 'standard',
   multilingualCount: 0,
   wireframeType: undefined,
-  selectedOptions: defaultPackage.suggestedOptions.slice(0, 2),
+  selectedOptions: [], // 初期状態ではオプションを選択しない
   maintenance: 'なし',
   notes: '',
   includeTax: true,

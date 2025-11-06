@@ -42,7 +42,8 @@ import {
   WIREFRAME_OPTIONS,
 } from '@/data/form-options';
 
-// 開発環境では必須項目チェックを無効化
+// 開発環境では必須項目チェックを無効化（一時的に開放）
+// Next.jsの開発モードを検出（サーバーサイドとクライアントサイドの両方で動作）
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 const SITE_PURPOSE_VALUES_LOCAL = basePackages.map((pkg) => pkg.name as SitePurpose);

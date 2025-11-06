@@ -84,7 +84,7 @@ export const basePackages: BasePackage[] = [
     description: 'カルチャー訴求と募集要項整備を重視した採用特化サイト向け。',
     basePrice: 90000,
     recommendedFor: '募集要項／社員紹介／カルチャー発信／エントリーフォーム',
-    includedPages: 5,
+    includedPages: 1,
     additionalPageUnitPrice: 22000,
     highlightSections: ['トップ', '会社紹介', '制度・福利厚生', '社員インタビュー', '募集要項', '応募フォーム'],
     suggestedOptions: ['contact_form', 'analytics_setup', 'copywriting'],

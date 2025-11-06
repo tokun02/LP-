@@ -178,12 +178,16 @@ export const EstimateWizard = () => {
   const watchedValues = formMethods.watch();
 
   // 必須項目のバリデーション（BasicInfoStepの場合）
-  // 開発環境では必須項目チェックを無効化
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  // 開発環境では必須項目チェックを無効化（一時的に開放）
+  // Next.jsの開発モードまたはlocalhost環境を検出
+  const isDevelopment = 
+    process.env.NODE_ENV === 'development' ||
+    (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
+  
   const isBasicInfoValid = useMemo(() => {
     if (currentStep !== 'basic') return true; // basic以外は常に有効
     
-    // 開発環境では必須項目チェックをスキップ
+    // 開発環境では必須項目チェックをスキップ（一時的に開放）
     if (isDevelopment) return true;
     
     // 必須セクションのチェック

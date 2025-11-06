@@ -393,7 +393,7 @@ export const SummaryStep = ({ breakdown, onReset, onBack }: SummaryStepProps) =>
                 !isSendingEmail && 'btn-primary-indigo'
               )}
             >
-              {isSendingEmail ? 'PDF生成中…' : 'PDFをダウンロード'}
+              {isSendingEmail ? '送信中…' : '送信'}
             </button>
             {isSendingEmail && (
               <span className="text-[13px] sm:text-sm text-slate-700 text-center sm:text-left font-medium">メール送信中...</span>
